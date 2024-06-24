@@ -1,0 +1,30 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "dataeng"
+    },
+    {
+      "path": "frontend"
+    }
+  ],
+  "settings": {
+    // General
+    "editor.formatOnSave": true,
+
+    // Git
+    "git.autofetch": "all",
+    "git.autofetchPeriod": 180,
+    "git.pruneOnFetch": true,
+
+    // Json
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
+  }
+}
