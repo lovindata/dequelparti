@@ -1,26 +1,27 @@
+import os.path
 from dataclasses import dataclass
-from importlib.resources import files
 from typing import List
 
-from PyPDF2 import PdfReader
-
-from src.confs.envs_conf import envs_conf_impl
-from src.modules.nouveau_front_populaire import resources
+from src.confs import envs_conf
+from src.modules.shared.services import pdf_svc
 
 
 @dataclass
 class NouveauFrontPopulaireSvc:
-    envs_conf = envs_conf_impl
+    envs_conf = envs_conf.impl
+    pdf_svc = pdf_svc.impl
 
     def extract_and_save_as_json(self) -> List[str]:
-        pdf_path = str(files(resources) / f"nouveau_front_populaire_programme.pdf")
-        pages = PdfReader(pdf_path).pages
-        for page in pages:
-            text = page.extract_text()
-            points = text.split("\n• ")
-            print(points)
+        input_pdf_filepath = os.path.abspath(
+            self.envs_conf.input_prgm_nouveau_front_populaire
+        )
+        output_dir_path = os.path.join(
+            self.envs_conf.output_data_path, os.path.basename(input_pdf_filepath)
+        )
+        tokens = self.pdf_svc.extract_tokens_and_save_as_json(
+            input_pdf_filepath, output_dir_path
+        )
+        return tokens
 
-        raise NotImplementedError()
 
-
-nouveau_front_populaire_svc_impl = NouveauFrontPopulaireSvc()
+impl = NouveauFrontPopulaireSvc()

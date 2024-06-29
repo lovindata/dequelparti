@@ -9,7 +9,7 @@
   "isort.args": ["--profile", "black"],
   "python.analysis.typeCheckingMode": "basic",
   "python.analysis.autoImportCompletions": true,
-  "python.analysis.diagnosticMode": "openFilesOnly",
+  "python.analysis.diagnosticMode": "workspace",
   "python.analysis.ignore": ["**/.venv/**"],
   "python.analysis.autoSearchPaths": false,
   "python.analysis.extraPaths": ["${workspaceFolder}"],

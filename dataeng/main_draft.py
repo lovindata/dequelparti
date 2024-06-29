@@ -1,16 +1,12 @@
 from importlib.resources import files
-from typing import Dict, List, Literal, Set
+from typing import Dict, List, Literal
 
 import spacy
 from PyPDF2 import PdfReader
 from spacy.lang.fr.stop_words import STOP_WORDS
 from spellchecker import SpellChecker
 
-import src.modules.ensemble.resources
-import src.modules.nouveau_front_populaire.resources
-import src.modules.rassemblement_national.resources
-
-
+"""
 def load_pages(
     prgm: Literal[
         "prgm_rassemblement_national", "prgm_ensemble", "prgm_nouveau_front_populaire"
@@ -97,6 +93,7 @@ for page in pages:
     page = fix_page_from_pdf_text_extract(page)
     tokens.extend(extract_tokens(page))
 # tokens = remove_or_correct_incorrect_spellchecked_tokens(tokens)
-tokens = remove_incorrect_spellchecked_tokens(tokens)
+# tokens = remove_incorrect_spellchecked_tokens(tokens)
 tokens = remove_stop_words_tokens(tokens)
 display_stats(tokens)
+"""
