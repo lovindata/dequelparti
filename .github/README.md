@@ -1,6 +1,5 @@
-# jevotequi
+# dequelparti
 
-- Deployment Github page
 - Fix limited vocabulary issue
   - Keep all words (raw + lemmatized) in PDFs -> Raw vocabulary
   - Do not change the json lemmatized programs

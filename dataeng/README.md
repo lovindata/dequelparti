@@ -1,8 +1,4 @@
-DataEng
-
----
-
-## Contribution
+# Contribution
 
 Please install [VSCode](https://code.visualstudio.com/) and its extensions:
 
