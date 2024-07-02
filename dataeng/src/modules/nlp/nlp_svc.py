@@ -11,12 +11,11 @@ from spellchecker import SpellChecker
 class NLPSvc:
     _NLP = spacy.load("fr_dep_news_trf")
 
-    def compute_tokens(self, texts: List[str]) -> List[str]:
-        tokens_by_text = [self._extract_tokens(text) for text in texts]
-        output_tokens = [token for tokens in tokens_by_text for token in tokens]
-        output_tokens = self._remove_incorrect_spellchecked_tokens(output_tokens)
+    def compute_tokens(self, text: str) -> List[str]:
+        tokens = self._extract_tokens(text)
+        output_tokens = self._remove_incorrect_spellchecked_tokens(tokens)
         output_tokens = self._remove_stop_words_tokens(output_tokens)
-        self._display_stats(output_tokens)
+        self._log_stats(output_tokens)
         return output_tokens
 
     def _extract_tokens(self, text: str) -> List[str]:
@@ -39,7 +38,7 @@ class NLPSvc:
     def _remove_stop_words_tokens(self, tokens: List[str]) -> List[str]:
         return [token for token in tokens if token not in STOP_WORDS]
 
-    def _display_stats(self, tokens: List[str]) -> None:
+    def _log_stats(self, tokens: List[str]) -> None:
         logger.info(f"{len(tokens)} tokens with {len(set(tokens))} unique tokens.")
 
 
