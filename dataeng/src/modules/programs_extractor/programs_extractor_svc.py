@@ -1,8 +1,6 @@
 import os
 from dataclasses import dataclass
-from typing import List, Set, Tuple
-
-from loguru import logger
+from typing import List
 
 from src.confs import envs_conf
 from src.modules.file_system import file_system_svc
@@ -15,48 +13,47 @@ class ProgramsExtractorSvc:
     nlp_svc = nlp_svc.impl
     file_system_svc = file_system_svc.impl
 
-    def run(self) -> None:  # TODO James: Cleanup code and fix this method
-        def build_input_and_output_filepaths() -> Tuple[List[str], str]:
-            filenames = os.listdir(self.envs_conf.dirpath_input)
+    def run(self) -> None:
+        def build_input_filepaths() -> List[str]:
+            filenames = os.listdir(self.envs_conf.input_dirpath)
             input_filepaths = [
-                os.path.join(self.envs_conf.dirpath_input, filename)
+                os.path.join(self.envs_conf.input_dirpath, filename)
                 for filename in filenames
             ]
-            output_filepath = os.path.join(
-                self.envs_conf.dirpath_output, "vocabulary.json"
-            )
-            return input_filepaths, output_filepath
+            return input_filepaths
 
-        input_filepaths, output_filepath = build_input_and_output_filepaths()
-
-        vocabulary: Set[str] = set()
-        for input_filepath in input_filepaths:
-            vocabulary.update(
-                self._extract_tokens_and_save_as_json(
-                    input_filepath, self.envs_conf.dirpath_output
+        def build_output_filepaths(
+            input_filepaths: List[str], output_dirpath: str
+        ) -> List[str]:
+            output_filepaths = []
+            for input_filepath in input_filepaths:
+                output_filename = (
+                    os.path.basename(input_filepath).split(".")[0] + ".json"
                 )
-            )
-        logger.info(f"Vocabulary size is {len(vocabulary)}.")
-        output_filepath = os.path.join(envs_conf.impl.dirpath_output, "vocabulary.json")
-        logger.info(f"Saving vocabulary at '{output_filepath}'.")
-        file_system_svc.impl.write_as_json(sorted(list(vocabulary)), output_filepath)
+                output_filepath = os.path.join(output_dirpath, output_filename)
+                output_filepaths.append(output_filepath)
+            return output_filepaths
 
-    def _extract_tokens_and_save_as_json(
-        self, input_pdf_filepath: str, output_tokens_dirpath: str
-    ) -> List[str]:
-        logger.info(f"Loading PDF '{input_pdf_filepath}'.")
-        pages = self.file_system_svc.read_pdf_pages(input_pdf_filepath)
+        def save_batch_of_lemmas(
+            batch_of_lemmas: List[List[str]], output_filepaths: List[str]
+        ) -> None:
+            for lemmas, output_filepath in zip(batch_of_lemmas, output_filepaths):
+                self.file_system_svc.write_as_json(lemmas, output_filepath)
 
-        logger.info(f"Extracting tokens from PDF '{input_pdf_filepath}'.")
-        tokens = [
-            token for page in pages for token in self.nlp_svc.compute_tokens(page)
+        input_filepaths = build_input_filepaths()
+        output_filepaths = build_output_filepaths(
+            input_filepaths, self.envs_conf.output_dirpath
+        )
+        output_vocabulary_path = os.path.join(
+            self.envs_conf.output_dirpath, "vocabulary.json"
+        )
+        batch_of_pages = [
+            self.file_system_svc.read_pdf_pages(input_filepath)
+            for input_filepath in input_filepaths
         ]
-
-        output_filename = os.path.basename(input_pdf_filepath).split(".")[0] + ".json"
-        output_filepath = os.path.join(output_tokens_dirpath, output_filename)
-        logger.info(f"Saving tokens at '{output_filepath}'.")
-        self.file_system_svc.write_as_json(tokens, output_filepath)
-        return tokens
+        batch_of_lemmas, vocabulary = self.nlp_svc.compute_lemmas(batch_of_pages)
+        self.file_system_svc.write_as_json(vocabulary, output_vocabulary_path)
+        save_batch_of_lemmas(batch_of_lemmas, output_filepaths)
 
 
 impl = ProgramsExtractorSvc()
