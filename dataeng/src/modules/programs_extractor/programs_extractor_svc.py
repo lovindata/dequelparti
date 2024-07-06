@@ -47,12 +47,20 @@ class ProgramsExtractorSvc:
         output_vocabulary_path = os.path.join(
             self.envs_conf.output_dirpath, "vocabulary.json"
         )
+        output_sim_matrix_path = os.path.join(
+            self.envs_conf.output_dirpath, "word_embedding_of_lemmas.json"
+        )
         batch_of_pages = [
             self.file_system_svc.read_pdf_pages(input_filepath)
             for input_filepath in input_filepaths
         ]
-        batch_of_lemmas, vocabulary = self.nlp_svc.compute_lemmas(batch_of_pages)
+        batch_of_lemmas, vocabulary, word_embedding_of_lemmas = (
+            self.nlp_svc.compute_nlp_entities(batch_of_pages)
+        )
         self.file_system_svc.write_as_json(vocabulary, output_vocabulary_path)
+        self.file_system_svc.write_as_json(
+            word_embedding_of_lemmas, output_sim_matrix_path
+        )
         save_batch_of_lemmas(batch_of_lemmas, output_filepaths)
 
 

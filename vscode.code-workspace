@@ -13,6 +13,7 @@
   "settings": {
     // General
     "editor.formatOnSave": true,
+    "workbench.editorLargeFileConfirmation": 20,
 
     // Git
     "git.autofetch": "all",
