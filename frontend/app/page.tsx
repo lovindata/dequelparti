@@ -7,7 +7,7 @@ import { InputWords } from "@/components/input-words";
 import { NavigationBar } from "@/components/navigation-bar";
 import { ProgressBar } from "@/components/progress-bar";
 import React from "react";
-import { lcs } from "@/helpers/lcs";
+import { computeSlidedCosineSimilarity } from "@/helpers/nlp";
 
 export default function Home() {
   const [words, setWords] = React.useState<string[]>([]);
@@ -16,9 +16,15 @@ export default function Home() {
     setWords((_) => _.filter((_, currIdx) => currIdx != idx));
   const popAllWords = () => setWords((_) => []);
 
-  let lcsEnsemble = lcs(words, ensembleTokens);
-  let lcsFrontPopulaire = lcs(words, frontPopulaireTokens);
-  let lcsRassemblementNational = lcs(words, rassemblementNationalTokens);
+  let lcsEnsemble = computeSlidedCosineSimilarity(words, ensembleTokens);
+  let lcsFrontPopulaire = computeSlidedCosineSimilarity(
+    words,
+    frontPopulaireTokens
+  );
+  let lcsRassemblementNational = computeSlidedCosineSimilarity(
+    words,
+    rassemblementNationalTokens
+  );
   const lcsSum = lcsEnsemble + lcsFrontPopulaire + lcsRassemblementNational;
   lcsEnsemble = lcsSum && (lcsEnsemble / lcsSum) * 100;
   lcsFrontPopulaire = lcsSum && (lcsFrontPopulaire / lcsSum) * 100;

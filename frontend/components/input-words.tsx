@@ -29,7 +29,7 @@ export function InputWords({
   let vocabularyShown =
     inputWord === ""
       ? []
-      : new Fuse(vocabulary)
+      : new Fuse(Object.keys(vocabulary))
           .search(inputWord)
           .map((_) => _.item)
           .filter((_) => !words.includes(_))
@@ -39,7 +39,6 @@ export function InputWords({
     <div className="space-y-6">
       <div className="text-3xl text-accent-foreground text-center flex flex-col space-y-1">
         <p>Découvre à quel parti politique tes mots correspondent!</p>
-        <p>Es-tu prêt à être surpris?</p>
       </div>
       <div className="space-y-4">
         <div className="flex justify-between space-x-2 w-full">

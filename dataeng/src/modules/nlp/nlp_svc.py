@@ -69,7 +69,7 @@ class NLPSvc:
     ) -> List[List[str]]:
         logger.info(f"Lemmatizing tokens.")
         several_lemmas = [
-            [token.lemma_ for token in tokens if token.text in vocabulary]
+            [vocabulary[token.text] for token in tokens if token.text in vocabulary]
             for tokens in batch_of_tokens
         ]
         return several_lemmas
