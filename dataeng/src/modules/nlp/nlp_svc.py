@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List, Mapping, Sequence, Tuple
+from typing import Dict, List, Sequence, Tuple
 
 import spacy
 from loguru import logger
@@ -7,33 +7,47 @@ from spacy.tokens import Token
 from spellchecker import SpellChecker
 from tqdm import tqdm
 
+from src.confs import envs_conf
+from src.modules.file_system.pdf_vo.pdf_page_vo import PdfPageVo
+from src.modules.file_system.pdf_vo.pdf_vo import PdfVo
+from src.modules.nlp.lemma_embeddings_vo import LemmaEmbeddingsVo
+from src.modules.nlp.slinding_avg_lemmas_vo import SlindingAvgLemmasVo
+from src.modules.nlp.vocabulary_vo import VocabularyVo
+
 
 @dataclass
 class NLPSvc:
+    envs_conf = envs_conf.impl
     _nlp = spacy.load("fr_core_news_lg")
     _spell_checker = SpellChecker(language="fr")
     _manual_stop_words = {"l", "etc."}
 
-    def compute_nlp_entities(
-        self, batch_of_texts: Sequence[Sequence[str]]
-    ) -> Tuple[List[List[str]], Dict[str, str], Dict[str, List[float]]]:
-        logger.info(f"Extracting tokens from {len(batch_of_texts)} batch of texts.")
-        batch_of_tokens = [
-            [token for text in texts for token in self._extract_tokens(text)]
-            for texts in batch_of_texts
+    def compute_nlp_value_objects(
+        self, pdfs: Sequence[PdfVo]
+    ) -> Tuple[List[SlindingAvgLemmasVo], VocabularyVo, LemmaEmbeddingsVo]:
+        logger.info(f"Extracting tokens from {len(pdfs)} PDFs.")
+        tokens_per_pdf = [
+            [
+                token
+                for pdf_page in pdf.pages
+                for token in self._extract_tokens(pdf_page)
+            ]
+            for pdf in pdfs
         ]
-        vocabulary = self._build_vocabulary(batch_of_tokens)
-        word_embedding_of_lemmas = self._build_word_embeddings(vocabulary)
-        batch_of_lemmas = self._lemmatize_tokens(batch_of_tokens, vocabulary=vocabulary)
-        self._log_stats(
-            batch_of_lemmas,
-            vocabulary=vocabulary,
-            word_embedding_of_lemmas=word_embedding_of_lemmas,
+        vocabulary = self._build_vocabulary(tokens_per_pdf)
+        lemma_embeddings = self._build_lemma_embeddings(vocabulary)
+        all_sliding_avg_lemmas = self._build_all_sliding_avg_lemmas(
+            tokens_per_pdf, vocabulary=vocabulary
         )
-        return batch_of_lemmas, vocabulary, word_embedding_of_lemmas
+        self._log_stats(
+            all_sliding_avg_lemmas,
+            vocabulary=vocabulary,
+            lemma_embeddings=lemma_embeddings,
+        )
+        return all_sliding_avg_lemmas, vocabulary, lemma_embeddings
 
-    def _extract_tokens(self, text: str) -> List[Token]:
-        doc = self._nlp(text)
+    def _extract_tokens(self, page: PdfPageVo) -> List[Token]:
+        doc = self._nlp(page.text)
         tokens = [
             token
             for token in doc
@@ -44,11 +58,11 @@ class NLPSvc:
         return tokens
 
     def _build_vocabulary(
-        self, batch_of_tokens: Sequence[Sequence[Token]]
-    ) -> Dict[str, str]:
+        self, tokens_per_pdf: Sequence[Sequence[Token]]
+    ) -> VocabularyVo:
         logger.info(f"Building vocabulary.")
         vocabulary: Dict[str, str] = {}
-        for tokens in batch_of_tokens:
+        for tokens in tokens_per_pdf:
             for token in tokens:
                 if token.text not in vocabulary:
                     vocabulary[token.text] = token.lemma_
@@ -62,11 +76,11 @@ class NLPSvc:
             and has_vector(vocabulary[word])  # Lemma has a vector
         }
         vocabulary = dict(sorted(vocabulary.items()))
-        return vocabulary
+        return VocabularyVo(vocabulary)
 
-    def _lemmatize_tokens(
-        self, batch_of_tokens: Sequence[Sequence[Token]], vocabulary: Mapping[str, str]
-    ) -> List[List[str]]:
+    def _build_all_sliding_avg_lemmas(
+        self, batch_of_tokens: Sequence[Sequence[Token]], vocabulary: VocabularyVo
+    ) -> List[SlindingAvgLemmasVo]:
         logger.info(f"Lemmatizing tokens.")
         several_lemmas = [
             [vocabulary[token.text] for token in tokens if token.text in vocabulary]
@@ -74,32 +88,32 @@ class NLPSvc:
         ]
         return several_lemmas
 
-    def _build_word_embeddings(
-        self, vocabulary: Mapping[str, str]
-    ) -> Dict[str, List[float]]:
+    def _build_lemma_embeddings(self, vocabulary: VocabularyVo) -> LemmaEmbeddingsVo:
         logger.info(f"Building word embeddings.")
-        lemmas = list(sorted(set(vocabulary.values())))
+        lemmas = list(sorted(set(vocabulary.value.values())))
         word_embedding_of_lemmas: Dict[str, List[float]] = {}
         for lemma in tqdm(lemmas):
             word_embedding_of_lemmas[lemma] = list(
                 [float(x) for x in self._nlp(lemma)[0].vector]
             )
-        return word_embedding_of_lemmas
+        return LemmaEmbeddingsVo(word_embedding_of_lemmas)
 
     def _log_stats(
         self,
-        batch_of_lemmas: Sequence[Sequence[str]],
-        vocabulary: Mapping[str, str],
-        word_embedding_of_lemmas: Mapping[str, List[float]],
+        all_sliding_avg_lemmas: Sequence[SlindingAvgLemmasVo],
+        vocabulary: VocabularyVo,
+        lemma_embeddings: LemmaEmbeddingsVo,
     ) -> None:
         logger.info(
-            f"Vocabulary of size {len(vocabulary)} with {len(set(vocabulary.values()))} unique lemmas."
+            f"Vocabulary of size {vocabulary.size()} with {vocabulary.nb_unique_lemmas()} unique lemmas."
         )
         logger.info(
-            f"Word embedding of lemmas have registered {len(word_embedding_of_lemmas)} entries with vectors of size {len(list(word_embedding_of_lemmas.values())[0])}."
+            f"Word embedding of lemmas have registered {lemma_embeddings.size()} entries with vectors of size {lemma_embeddings.vector_size()}."
         )
-        for i, lemmas in enumerate(batch_of_lemmas):
-            logger.info(f"{len(lemmas)} lemmas for the batch '{i}'.")
+        for i, lemmas in enumerate(all_sliding_avg_lemmas):
+            logger.info(
+                f"{len(lemmas)} lemmas for the batch '{i}'."
+            )  # TODO James continue here!
 
 
 impl = NLPSvc()

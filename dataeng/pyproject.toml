@@ -9,6 +9,8 @@ spacy = "^3.7.5"
 pyspellchecker = "^0.8.1"
 fr-core-news-lg = {url = "https://github.com/explosion/spacy-models/releases/download/fr_core_news_lg-3.7.0/fr_core_news_lg-3.7.0-py3-none-any.whl"}
 tqdm = "^4.66.4"
+fr-core-news-md = {url = "https://github.com/explosion/spacy-models/releases/download/fr_core_news_md-3.7.0/fr_core_news_md-3.7.0-py3-none-any.whl"}
+textblob = "^0.18.0.post0"
 
 [build-system]
 requires = ["poetry-core"]
