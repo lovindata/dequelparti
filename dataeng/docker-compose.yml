@@ -1,0 +1,12 @@
+services:
+  llm:
+    image: lovindata/private:dequelparti-llm-latest
+    ports:
+      - 11434:11434
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
