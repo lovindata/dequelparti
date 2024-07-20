@@ -17,7 +17,7 @@ class LLMPrepSvc:
     spacy_conf = spacy_conf.impl
     file_system_svc = file_system_svc.impl
 
-    def compute_llm_prep_rows(self, pdfs: Sequence[PdfVo]) -> List[LLMRowsVo]:
+    def compute_llm_rows(self, pdfs: Sequence[PdfVo]) -> List[LLMRowsVo]:
         texts_per_pdf = [
             [page.text for page in pdf.pages if self._has_enough_words(page.text)]
             for pdf in pdfs

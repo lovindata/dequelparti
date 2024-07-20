@@ -23,7 +23,8 @@ class FileSystemSvc:
         pages = PdfReader(filepath).pages
         pages = [page.extract_text() for page in pages]
         pages = [PdfPageVo(page) for page in pages]
-        return PdfVo(pages)
+        filename = os.path.basename(filepath)
+        return PdfVo(filename, pages)
 
     def write_as_json(self, data: Any, output_json_filepath: str) -> None:
         logger.info(f"Saving json at '{output_json_filepath}'.")
