@@ -22,23 +22,21 @@ class LLMPrepSvc:
             [page.text for page in pdf.pages if self._has_enough_words(page.text)]
             for pdf in pdfs
         ]
-        logger.info("Computing positive consequences for each page of each PDF.")
+        logger.info("Computing positive consequences for all pages of each PDF.")
         positive_csqs_per_pdf = [
             LLMRowsVo.concat_all(
                 [self._compute_csqs_via_text(text, "positives") for text in tqdm(texts)]
             )
             for texts in texts_per_pdf
         ]
-        logger.info("Computing negative consequences for each page of each PDF.")
+        logger.info("Computing negative consequences for all pages of each PDF.")
         negative_csqs_per_pdf = [
             LLMRowsVo.concat_all(
                 [self._compute_csqs_via_text(text, "negatives") for text in tqdm(texts)]
             )
             for texts in texts_per_pdf
         ]
-        logger.info(
-            "Computing reformulations for each consequence from each page of each PDF."
-        )
+        logger.info("Computing reformulations for all consequences of each PDF.")
         csqs_per_pdf = positive_csqs_per_pdf
         csqs_per_pdf.extend(negative_csqs_per_pdf)
         rfms_per_pdf = [

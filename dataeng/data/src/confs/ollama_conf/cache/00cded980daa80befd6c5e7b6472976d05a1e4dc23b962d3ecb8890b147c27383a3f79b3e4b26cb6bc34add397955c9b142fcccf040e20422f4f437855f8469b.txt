@@ -1,0 +1,23 @@
+- La complexité du système et le manque de coordination accroissent le risque de fraudes.
+- Le système étant complexe et les acteurs non coordonnés, les fraudes sont plus susceptibles d'augmenter.
+-  La sophistication des systèmes et l'absence de collaboration favorisent la prolifération des fraudes potentielles. 
+- L'interdépendance des parties prenantes et le manque de synergie augmentent le risque de fraude.
+- Le manque de coordination entre les acteurs du système accroît les vulnérabilités aux fraudes. 
+- La sophistication croissante du système, associée à un manque de coordination, ouvre la voie à une augmentation des fraudes potentielles.
+-  Le manque d'harmonisation et de cohérence au sein du système augmente la possibilité de fraudes.
+- L'absence de dialogue et de coopération entre les acteurs peut entraîner une hausse des activités frauduleuses.
+- La complexité du système rend difficile la détection et la prévention des fraudes, exacerbant le problème.
+-  Le manque d'intégration des différents composants du système crée des failles exploitables par les fraudeurs. 
+-  La difficulté à surmonter les silos entre les acteurs du système contribue à l'émergence de nouvelles formes de fraude.
+-  L'absence de mécanismes de contrôle robustes et coordonnés amplifie le risque de fraude.
+- L'hétérogénéité des systèmes et la déficience en coordination facilitent les opérations frauduleuses.
+- La multiplicité des acteurs et l'absence d'une vision globale augmentent les risques de fraudes.
+-  Le manque de transparence et de partage d'informations entre les parties prenantes favorise les activités illégales. 
+- L'enchevêtrement des processus et le manque d'unité d'action créent un terrain fertile pour la fraude.
+- La complexité du système et l'isolement des acteurs augmentent le risque de manipulations frauduleuses.
+-  L'absence de synergie entre les différents systèmes et services amplifie les risques liés à la fraude. 
+- La difficulté à surveiller et à contrôler un système complexe contribue à l'augmentation des fraudes.
+- L'absence d'un cadre de gouvernance clair et coordonné rend le système vulnérable aux attaques frauduleuses. 
+
+
+
