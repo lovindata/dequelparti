@@ -10,6 +10,15 @@ class EnvsConf:
     output_dirpath = os.path.abspath(
         os.getenv("DEQUELPARTI_OUTPUT_DIRPATH", "../frontend/data")
     )
+
+    ollama_ip = os.getenv("DEQUELPARTI_OLLAMA_IP", "localhost")
+    ollama_port = int(os.getenv("DEQUELPARTI_OLLAMA_PORT", "11434"))
+    ollama_cache_dirpath = os.path.abspath(
+        os.getenv(
+            "DEQUELPARTI_OLLAMA_CACHE_DIRPATH", "./data/src/confs/ollama_conf/cache"
+        )
+    )
+
     sliding_avg_lemmas_window = int(
         os.getenv("DEQUELPARTI_SLIDING_AVG_LEMMAS_WINDOW", "50")
     )

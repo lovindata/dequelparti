@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Any, List
 
 from loguru import logger
-from PyPDF2 import PageObject, PdfReader
+from PyPDF2 import PdfReader
 
 from src.modules.file_system.pdf_vo.pdf_page_vo import PdfPageVo
 from src.modules.file_system.pdf_vo.pdf_vo import PdfVo
@@ -12,17 +12,16 @@ from src.modules.file_system.pdf_vo.pdf_vo import PdfVo
 
 @dataclass
 class FileSystemSvc:
-    def read_pdf(self, path: str) -> PdfVo:
-        def extract_text(page: PageObject) -> str:
-            text = page.extract_text()
-            fixes = {"-\n": "", "\n": " "}
-            for fix in fixes:
-                text = text.replace(fix, fixes[fix])
-            return text
+    def read_pdfs(self, dirpath: str) -> List[PdfVo]:
+        filenames = os.listdir(dirpath)
+        filepaths = [os.path.join(dirpath, filename) for filename in filenames]
+        logger.info(f"Loading PDF(s) '{", ".join(filepaths)}'.")
+        pdfs = [self._read_pdf(filepath) for filepath in filepaths]
+        return pdfs
 
-        logger.info(f"Loading PDF '{path}' pages.")
-        pages = PdfReader(path).pages
-        pages = [extract_text(page) for page in pages]
+    def _read_pdf(self, filepath: str) -> PdfVo:
+        pages = PdfReader(filepath).pages
+        pages = [page.extract_text() for page in pages]
         pages = [PdfPageVo(page) for page in pages]
         return PdfVo(pages)
 
