@@ -1,4 +1,3 @@
-import json
 import os
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -18,16 +17,20 @@ class OllamaConf:
 
     @contextmanager
     def get_prediction(self, command: str) -> Generator[str, None, None]:
-        message_content = self._load_from_disk(command)
-        is_not_loaded_from_disk = message_content == None
-        if is_not_loaded_from_disk:
-            message_content = self._predict(command)
+        loaded_message_content = self._load_cache_from_disk(command)
+        message_content = (
+            loaded_message_content
+            if loaded_message_content != None
+            else self._predict(command)
+        )
         try:
             yield message_content
         except:
+            if loaded_message_content != None:
+                self._delete_cache_from_disk(command)
             raise
         else:
-            if is_not_loaded_from_disk:
+            if loaded_message_content != None:
                 self._cache_to_disk(command, message_content)
 
     def _predict(self, command: str) -> str:
@@ -43,7 +46,7 @@ class OllamaConf:
         message_content: str = assistant_response["message"]["content"]
         return message_content
 
-    def _load_from_disk(self, command: str) -> str | None:
+    def _load_cache_from_disk(self, command: str) -> str | None:
         filename = self._build_filename(command)
         filepath = os.path.join(envs_conf.impl.ollama_cache_dirpath, filename)
         message_content = None
@@ -52,10 +55,16 @@ class OllamaConf:
                 message_content = file.read()
         return message_content
 
-    def _cache_to_disk(self, command: str, message_content: str) -> None:
-        os.makedirs(envs_conf.impl.ollama_cache_dirpath, exist_ok=True)
+    def _delete_cache_from_disk(self, command: str) -> None:
         filename = self._build_filename(command)
         filepath = os.path.join(envs_conf.impl.ollama_cache_dirpath, filename)
+        if os.path.exists(filepath):
+            os.remove(filepath)
+
+    def _cache_to_disk(self, command: str, message_content: str) -> None:
+        filename = self._build_filename(command)
+        filepath = os.path.join(envs_conf.impl.ollama_cache_dirpath, filename)
+        os.makedirs(envs_conf.impl.ollama_cache_dirpath, exist_ok=True)
         with open(filepath, "w+") as f:
             f.write(message_content)
 

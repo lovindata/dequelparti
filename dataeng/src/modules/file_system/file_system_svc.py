@@ -27,7 +27,7 @@ class FileSystemSvc:
 
     def write_as_json(self, data: Any, output_json_filepath: str) -> None:
         logger.info(f"Saving json at '{output_json_filepath}'.")
-        data_as_json = json.dumps(data, indent=2, ensure_ascii=False)
+        data_as_json = json.dumps(data, ensure_ascii=False)
         dirpath = os.path.dirname(output_json_filepath)
         os.makedirs(dirpath, exist_ok=True)
         with open(output_json_filepath, "w+") as f:

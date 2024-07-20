@@ -50,7 +50,7 @@ class LLMPrepSvc:
         return rfms_per_pdf
 
     def _has_enough_words(self, text: str) -> bool:
-        tokens = self.spacy_conf.predict(text)
+        tokens = list(self.spacy_conf.spacy(text))
         return len(tokens) > 50
 
     def _compute_csqs_via_text(
