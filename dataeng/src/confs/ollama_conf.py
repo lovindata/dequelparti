@@ -19,18 +19,16 @@ class OllamaConf:
     def get_prediction(self, command: str) -> Generator[str, None, None]:
         loaded_message_content = self._load_cache_from_disk(command)
         message_content = (
-            loaded_message_content
-            if loaded_message_content != None
-            else self._predict(command)
+            loaded_message_content if loaded_message_content else self._predict(command)
         )
         try:
             yield message_content
         except:
-            if loaded_message_content != None:
+            if loaded_message_content:
                 self._delete_cache_from_disk(command)
             raise
         else:
-            if loaded_message_content != None:
+            if not loaded_message_content:
                 self._cache_to_disk(command, message_content)
 
     def _predict(self, command: str) -> str:
