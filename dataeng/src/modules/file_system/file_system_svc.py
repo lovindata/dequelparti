@@ -25,13 +25,13 @@ class FileSystemSvc:
         pages = [PdfPageVo(page) for page in pages]
         return PdfVo(pages)
 
-    def write_as_json(self, object: Any, output_json_filepath: str) -> None:
+    def write_as_json(self, data: Any, output_json_filepath: str) -> None:
         logger.info(f"Saving json at '{output_json_filepath}'.")
-        object_as_json = json.dumps(object, indent=2, ensure_ascii=False)
+        data_as_json = json.dumps(data, indent=2, ensure_ascii=False)
         dirpath = os.path.dirname(output_json_filepath)
         os.makedirs(dirpath, exist_ok=True)
         with open(output_json_filepath, "w+") as f:
-            f.write(object_as_json)
+            f.write(data_as_json)
 
 
 impl = FileSystemSvc()

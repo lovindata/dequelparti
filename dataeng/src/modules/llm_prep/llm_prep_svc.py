@@ -7,7 +7,7 @@ from tqdm import tqdm
 from src.confs import envs_conf, ollama_conf, spacy_conf
 from src.modules.file_system import file_system_svc
 from src.modules.file_system.pdf_vo.pdf_vo import PdfVo
-from src.modules.llm_prep.llm_prep_rows_vo import LLMPrepRowsVo
+from src.modules.llm_prep.llm_rows_vo import LLMRowsVo
 
 
 @dataclass
@@ -17,21 +17,21 @@ class LLMPrepSvc:
     spacy_conf = spacy_conf.impl
     file_system_svc = file_system_svc.impl
 
-    def compute_llm_prep_rows(self, pdfs: Sequence[PdfVo]) -> List[LLMPrepRowsVo]:
+    def compute_llm_prep_rows(self, pdfs: Sequence[PdfVo]) -> List[LLMRowsVo]:
         texts_per_pdf = [
             [page.text for page in pdf.pages if self._has_enough_words(page.text)]
             for pdf in pdfs
         ]
         logger.info("Computing positive consequences for each page of each PDF.")
         positive_csqs_per_pdf = [
-            LLMPrepRowsVo.concat_all(
+            LLMRowsVo.concat_all(
                 [self._compute_csqs_via_text(text, "positives") for text in tqdm(texts)]
             )
             for texts in texts_per_pdf
         ]
         logger.info("Computing negative consequences for each page of each PDF.")
         negative_csqs_per_pdf = [
-            LLMPrepRowsVo.concat_all(
+            LLMRowsVo.concat_all(
                 [self._compute_csqs_via_text(text, "negatives") for text in tqdm(texts)]
             )
             for texts in texts_per_pdf
@@ -42,8 +42,8 @@ class LLMPrepSvc:
         csqs_per_pdf = positive_csqs_per_pdf
         csqs_per_pdf.extend(negative_csqs_per_pdf)
         rfms_per_pdf = [
-            LLMPrepRowsVo.concat_all(
-                [self._compute_rfms_via_text(csq) for csq in tqdm(csqs.rows)]
+            LLMRowsVo.concat_all(
+                [self._compute_rfms_via_text(csq) for csq in tqdm(csqs.root)]
             )
             for csqs in csqs_per_pdf
         ]
@@ -55,7 +55,7 @@ class LLMPrepSvc:
 
     def _compute_csqs_via_text(
         self, text: str, kind: Literal["positives", "negatives"]
-    ) -> LLMPrepRowsVo:
+    ) -> LLMRowsVo:
         command = f"""{text}
 
 Pour le texte ci-dessus, dans le cadre de l'augmentation de données pour entraîner un réseau de neurones dense:
@@ -64,9 +64,9 @@ Pour le texte ci-dessus, dans le cadre de l'augmentation de données pour entra�
 - Pas d'entêtes ou autres artéfacts dans ta réponse, il faut VRAIMENT RESPECTER LE FROMAT "- conséquence0\n- conséquence1\n- ..."
 """
         with self.ollama_conf.get_prediction(command) as raw_csqs:
-            return LLMPrepRowsVo.from_raw(raw_csqs)
+            return LLMRowsVo.from_raw(raw_csqs)
 
-    def _compute_rfms_via_text(self, text: str) -> LLMPrepRowsVo:
+    def _compute_rfms_via_text(self, text: str) -> LLMRowsVo:
         command = f"""{text}
 
 Pour le texte ci-dessus, dans le cadre de l'augmentation de données pour entraîner un réseau de neurones dense:
@@ -75,7 +75,7 @@ Pour le texte ci-dessus, dans le cadre de l'augmentation de données pour entra�
 - Pas d'entêtes ou autres artéfacts dans ta réponse, il faut VRAIMENT RESPECTER LE FROMAT "- reformulation0\n- reformulation1\n ... - reformulation25\n"
 """
         with self.ollama_conf.get_prediction(command) as raw_rfms:
-            return LLMPrepRowsVo.from_raw(raw_rfms)
+            return LLMRowsVo.from_raw(raw_rfms)
 
 
 impl = LLMPrepSvc()

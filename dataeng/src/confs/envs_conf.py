@@ -4,6 +4,10 @@ from dataclasses import dataclass
 
 @dataclass
 class EnvsConf:
+    vocabulary_dirpath = os.path.abspath(
+        os.getenv("DEQUELPARTI_VOCABULARY_DIRPATH", "../frontend/data/vocabulary")
+    )
+
     input_dirpath = os.path.abspath(
         os.getenv("DEQUELPARTI_INPUT_DIRPATH", "../frontend/public/programs")
     )
