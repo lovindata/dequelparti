@@ -37,8 +37,12 @@ class LLMPrepSvc:
             for texts in texts_per_pdf
         ]
         logger.info("Computing reformulations for all consequences of each PDF.")
-        csqs_per_pdf = positive_csqs_per_pdf
-        csqs_per_pdf.extend(negative_csqs_per_pdf)
+        csqs_per_pdf = [
+            LLMRowsVo.concat_all([positive_csqs, negative_csqs])
+            for positive_csqs, negative_csqs in zip(
+                positive_csqs_per_pdf, negative_csqs_per_pdf, strict=True
+            )
+        ]
         rfms_per_pdf = [
             LLMRowsVo.concat_all(
                 [self._compute_rfms_via_text(csq) for csq in tqdm(csqs.root)]
