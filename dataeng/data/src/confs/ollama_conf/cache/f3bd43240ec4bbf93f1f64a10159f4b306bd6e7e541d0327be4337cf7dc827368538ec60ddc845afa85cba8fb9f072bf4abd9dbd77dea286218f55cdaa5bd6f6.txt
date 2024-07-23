@@ -1,0 +1,28 @@
+-  Menace à la protection des données personnelles et des droits fondamentaux 
+- Impact sur la confidentialité et les libertés individuelles
+- Dégradation du respect de la vie privée due à la collecte massive de données
+- Possibilité d'atteinte aux droits individuels dans le contexte de l'apprentissage automatique
+- Risque de compromission des informations sensibles par l'utilisation de données non anonymisées
+- Problématique de surveillance accrue et atteinte à la liberté individuelle
+- Perte de contrôle sur les données personnelles et vulnérabilité aux abus
+- Défis éthiques liés à la protection de la vie privée dans l'apprentissage automatique
+- Inégalités potentielles engendrées par l'utilisation non réglementée des données
+-  Danger pour la démocratie si la confidentialité est bafouée
+
+- Problématique d'abus de pouvoir et de discrimination via l'analyse de données massives
+- Dégradation de la confiance publique dans les technologies d'apprentissage automatique
+- Besoin urgent de renforcer les garde-fous légaux pour protéger la vie privée
+-  Importance de garantir un consentement éclairé pour l'utilisation des données personnelles
+
+-  Défi de concilier le progrès technologique avec la protection des libertés individuelles
+-  Nécessité d'une approche responsable et éthique dans le traitement des données 
+-  Risque de création de profils discriminatoires à partir des données collectées
+-  Pertes potentielles de l'anonymat des individus dans les bases de données
+
+- Impact sur la sécurité numérique et la protection contre les atteintes à la vie privée
+- Débat crucial sur le rôle de l'État dans la régulation de l'accès aux données
+- Importance de sensibiliser le grand public aux risques liés à la collecte massive de données 
+-  Nécessité d'une gouvernance mondiale pour encadrer l'utilisation des données personnelles
+
+
+
