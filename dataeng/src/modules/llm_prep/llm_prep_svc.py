@@ -1,5 +1,8 @@
+import os
+import random
 from dataclasses import dataclass
-from typing import List, Literal, Sequence
+from hashlib import sha3_512
+from typing import Dict, List, Literal, Sequence
 
 from loguru import logger
 from tqdm import tqdm
@@ -49,6 +52,18 @@ class LLMPrepSvc:
             )
             for csqs in csqs_per_pdf
         ]
+        logger.info("Cleaning up rows with no word embeddings.")
+        rows_per_pdf = [
+            LLMRowsVo(
+                [
+                    row
+                    for row in tqdm(rows.root)
+                    if self._has_at_least_one_token_with_vector(row)
+                ]
+            )
+            for rows in rfms_per_pdf
+        ]
+        self._save_as_json_dataset_for_display(rows_per_pdf, pdfs)
         return rfms_per_pdf
 
     def _has_enough_words(self, text: str) -> bool:
@@ -78,6 +93,23 @@ Pour le texte ci-dessus, dans le cadre de l'augmentation de donnÃ©es pour entraÃ
 """
         with self.ollama_conf.get_prediction(command) as raw_rfms:
             return LLMRowsVo.from_raw(raw_rfms)
+
+    def _has_at_least_one_token_with_vector(self, text: str) -> bool:
+        return True in [token.has_vector for token in list(self.spacy_conf.spacy(text))]
+
+    def _save_as_json_dataset_for_display(
+        self, rfms_per_pdf: Sequence[LLMRowsVo], pdfs: Sequence[PdfVo]
+    ) -> None:
+        out_rows: List[Dict[str, str]] = []
+        for rfms, pdf in zip(rfms_per_pdf, pdfs, strict=True):
+            rows = [{"data": row, "label": pdf.name} for row in rfms.root]
+            out_rows.extend(rows)
+        filename = sha3_512(random.random().__str__().encode()).hexdigest()
+        filepath = os.path.join(
+            envs_conf.impl.llm_prep_svc_cache_dirpath, f"{filename}.json"
+        )
+        logger.info(f"Saving as JSON dataset for display at '{filepath}'.")
+        self.file_system_svc.write_as_json(out_rows, filepath)
 
 
 impl = LLMPrepSvc()

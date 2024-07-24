@@ -17,9 +17,17 @@ class EnvsConf:
 
     ollama_ip = os.getenv("DEQUELPARTI_OLLAMA_IP", "localhost")
     ollama_port = int(os.getenv("DEQUELPARTI_OLLAMA_PORT", "11434"))
-    ollama_cache_dirpath = os.path.abspath(
+
+    ollama_conf_cache_dirpath = os.path.abspath(
         os.getenv(
-            "DEQUELPARTI_OLLAMA_CACHE_DIRPATH", "./data/src/confs/ollama_conf/cache"
+            "DEQUELPARTI_OLLAMA_CONF_CACHE_DIRPATH",
+            "./data/src/confs/ollama_conf/cache",
+        )
+    )
+    llm_prep_svc_cache_dirpath = os.path.abspath(
+        os.getenv(
+            "DEQUELPARTI_LLM_PREP_SVC_CACHE_DIRPATH",
+            "./data/src/modules/llm_prep_svc/cache",
         )
     )
 

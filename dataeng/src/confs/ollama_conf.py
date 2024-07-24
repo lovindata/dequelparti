@@ -46,7 +46,7 @@ class OllamaConf:
 
     def _load_cache_from_disk(self, command: str) -> str | None:
         filename = self._build_filename(command)
-        filepath = os.path.join(envs_conf.impl.ollama_cache_dirpath, filename)
+        filepath = os.path.join(self.envs_conf.ollama_conf_cache_dirpath, filename)
         message_content = None
         if os.path.exists(filepath):
             with open(filepath, "r") as file:
@@ -55,14 +55,14 @@ class OllamaConf:
 
     def _delete_cache_from_disk(self, command: str) -> None:
         filename = self._build_filename(command)
-        filepath = os.path.join(envs_conf.impl.ollama_cache_dirpath, filename)
+        filepath = os.path.join(self.envs_conf.ollama_conf_cache_dirpath, filename)
         if os.path.exists(filepath):
             os.remove(filepath)
 
     def _cache_to_disk(self, command: str, message_content: str) -> None:
         filename = self._build_filename(command)
-        filepath = os.path.join(envs_conf.impl.ollama_cache_dirpath, filename)
-        os.makedirs(envs_conf.impl.ollama_cache_dirpath, exist_ok=True)
+        filepath = os.path.join(self.envs_conf.ollama_conf_cache_dirpath, filename)
+        os.makedirs(self.envs_conf.ollama_conf_cache_dirpath, exist_ok=True)
         with open(filepath, "w+") as f:
             f.write(message_content)
 
