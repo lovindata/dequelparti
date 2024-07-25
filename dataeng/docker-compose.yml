@@ -1,6 +1,6 @@
 services:
   llm:
-    image: lovindata/private:dequelparti-llm-latest
+    image: lovindata/private:dequelparti-llm-latest # https://hub.docker.com/layers/lovindata/private/dequelparti-llm-latest/images/sha256-882f8adf71729be940ec82148478f7f54c06c182a7d8df68ff61108b0d647755?context=repo
     ports:
       - 11434:11434
     deploy:

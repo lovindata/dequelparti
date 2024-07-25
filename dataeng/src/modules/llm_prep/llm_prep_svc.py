@@ -28,14 +28,14 @@ class LLMPrepSvc:
         logger.info("Computing positive consequences for all pages of each PDF.")
         positive_csqs_per_pdf = [
             LLMRowsVo.concat_all(
-                [self._compute_csqs_via_text(text, "positives") for text in tqdm(texts)]
+                [self._compute_csqs_via_text(text, "positive") for text in tqdm(texts)]
             )
             for texts in texts_per_pdf
         ]
         logger.info("Computing negative consequences for all pages of each PDF.")
         negative_csqs_per_pdf = [
             LLMRowsVo.concat_all(
-                [self._compute_csqs_via_text(text, "negatives") for text in tqdm(texts)]
+                [self._compute_csqs_via_text(text, "negative") for text in tqdm(texts)]
             )
             for texts in texts_per_pdf
         ]
@@ -71,14 +71,16 @@ class LLMPrepSvc:
         return len(tokens) > 50
 
     def _compute_csqs_via_text(
-        self, text: str, kind: Literal["positives", "negatives"]
+        self, text: str, kind: Literal["positive", "negative"]
     ) -> LLMRowsVo:
         command = f"""{text}
 
-Pour le texte ci-dessus, dans le cadre de l'augmentation de données pour entraîner un réseau de neurones dense:
-- Génère environ 25 conséquences {kind} de ces mesures
-- Une réponse EXACTEMENT FORMATTER "- conséquence0\n- conséquence1\n- ..."
-- Pas d'entêtes ou autres artéfacts dans ta réponse, il faut VRAIMENT RESPECTER LE FROMAT "- conséquence0\n- conséquence1\n- ..."
+For the above text, in the context of data augmentation to train a dense neural network:
+
+- Generate 25 {kind} consequences of these measures
+- An answer EXACTLY FORMATTED "- consequence1\n- consequence2\n- consequence3 ... \n- consequence25"
+- No headers or other artifacts in your response, you REALLY NEED TO FOLLOW THE FORMAT "- consequence1\n- consequence2\n- consequence3 ... \n- consequence25"
+- In French
 """
         with self.ollama_conf.get_prediction(command) as raw_csqs:
             return LLMRowsVo.from_raw(raw_csqs)
@@ -86,10 +88,12 @@ Pour le texte ci-dessus, dans le cadre de l'augmentation de données pour entra�
     def _compute_rfms_via_text(self, text: str) -> LLMRowsVo:
         command = f"""{text}
 
-Pour le texte ci-dessus, dans le cadre de l'augmentation de données pour entraîner un réseau de neurones dense:
-- Génère environ 25 reformulations SANS USAGE DES MËMES MOTS pour ce texte
-- Une réponse EXACTEMENT FORMATTER "- reformulation0\n- reformulation1\n ... - reformulation25\n"
-- Pas d'entêtes ou autres artéfacts dans ta réponse, il faut VRAIMENT RESPECTER LE FROMAT "- reformulation0\n- reformulation1\n ... - reformulation25\n"
+For the above text, in the context of data augmentation to train a dense neural network:
+
+- Generate 25 rephrasings WITHOUT USING THE SAME WORDS for the text
+- An answer EXACTLY FORMATTED "- rephrasing1\n- rephrasing2\n- rephrasing3 ... \n- rephrasing25"
+- No headers or other artifacts in your response, you REALLY NEED TO FOLLOW THE FORMAT "- rephrasing1\n- rephrasing2\n- rephrasing3 ... \n- rephrasing25"
+- In French
 """
         with self.ollama_conf.get_prediction(command) as raw_rfms:
             return LLMRowsVo.from_raw(raw_rfms)
