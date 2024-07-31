@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -9,9 +11,9 @@ from ollama import Client
 from src.confs import envs_conf
 
 
-@dataclass
+@dataclass(frozen=True)
 class OllamaConf:
-    envs_conf = envs_conf.impl
+    envs_conf: envs_conf.EnvsConf = envs_conf.impl
 
     _ollama = Client(host=f"http://{envs_conf.ollama_ip}:{envs_conf.ollama_port}")
 

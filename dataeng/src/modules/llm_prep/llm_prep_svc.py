@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import random
 from dataclasses import dataclass
@@ -13,12 +15,12 @@ from src.modules.file_system.pdf_vo.pdf_vo import PdfVo
 from src.modules.llm_prep.llm_rows_vo import LLMRowsVo
 
 
-@dataclass
+@dataclass(frozen=True)
 class LLMPrepSvc:
-    envs_conf = envs_conf.impl
-    ollama_conf = ollama_conf.impl
-    spacy_conf = spacy_conf.impl
-    file_system_svc = file_system_svc.impl
+    envs_conf: envs_conf.EnvsConf = envs_conf.impl
+    ollama_conf: ollama_conf.OllamaConf = ollama_conf.impl
+    spacy_conf: spacy_conf.SpacyConf = spacy_conf.impl
+    file_system_svc: file_system_svc.FileSystemSvc = file_system_svc.impl
 
     def compute_llm_rows(self, pdfs: Sequence[PdfVo]) -> List[LLMRowsVo]:
         texts_per_pdf = [

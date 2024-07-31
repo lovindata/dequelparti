@@ -10,7 +10,7 @@ from src.modules.file_system.pdf_vo.pdf_page_vo import PdfPageVo
 from src.modules.file_system.pdf_vo.pdf_vo import PdfVo
 
 
-@dataclass
+@dataclass(frozen=True)
 class FileSystemSvc:
     def read_pdfs(self, dirpath: str) -> List[PdfVo]:
         filenames = os.listdir(dirpath)
