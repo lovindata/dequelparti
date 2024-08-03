@@ -1,0 +1,44 @@
+- L'augmentation des dépenses liées à l'acquisition de données pour entraîner des réseaux neuronaux denses peut saper la compétitivité des entreprises.
+
+-  Une hausse des coûts de formation des réseaux neuronaux, due notamment à la nécessité de vastes ensembles de données, risque de réduire la capacité concurrentielle des entreprises.
+
+- L'accès à des quantités considérables de données pour l'apprentissage automatique représente un coût croissant qui peut menacer la rentabilité et la compétitivité des entreprises.
+
+- La flambée des coûts associés à la collecte et au traitement de données d'entraînement pour les réseaux neuronaux pourrait engendrer des pertes de compétitivité et potentiellement des suppressions d'emplois. 
+
+-  L'investissement nécessaire en données pour l'apprentissage profond peut s'avérer un fardeau économique pour les entreprises, menaçant leur position sur le marché.
+
+- L'augmentation des coûts liés à la formation des modèles neuronaux, notamment à cause de la demande croissante en données, risque d'affaiblir la compétitivité des entreprises.
+
+- Le besoin accru en données entraînant une augmentation des dépenses pour les entreprises, celles-ci pourraient voir leur capacité concurrentielle réduite et envisager des licenciements.
+
+-  L'essor de l'apprentissage automatique repose sur un volume massif de données, ce qui a des répercussions financières importantes sur les entreprises et peut entraîner une baisse de compétitivité.
+
+- La dépendance croissante des entreprises aux réseaux neuronaux exige des investissements importants en données, qui peuvent avoir des conséquences négatives sur leur rentabilité et leur position concurrentielle.
+
+-  La pression constante pour développer des modèles neuronaux plus performants augmente les coûts liés à la collecte et au traitement des données, pouvant menacer la compétitivité des entreprises.
+
+
+-  L'augmentation des coûts de l'apprentissage profond peut conduire à une restructuration des entreprises, avec des licenciements potentiels en conséquence.
+
+-  La quête d'un avantage concurrentiel via les réseaux neuronaux exige souvent un investissement important en données, ce qui peut s'avérer coûteux pour les entreprises et fragiliser leur position sur le marché.
+- 
+- Les entreprises confrontées à une augmentation des coûts de l'apprentissage profond pourraient être contraintes de revoir leurs stratégies et envisager des réductions de personnel pour rester compétitives.
+
+-  Le coût croissant des données d'entraînement pour les réseaux neuronaux menace la viabilité économique de certaines entreprises, qui pourraient se retrouver en difficulté face à leurs concurrents.
+ 
+- La nécessité d'accéder à des ensembles de données toujours plus volumineux et complexes pour entraîner des réseaux neuronaux pose un défi financier majeur aux entreprises.
+
+-  L'augmentation des coûts liés à l'apprentissage profond risque de creuser le fossé entre les grandes entreprises disposant de ressources financières importantes et les petites entreprises.
+ 
+-  La recherche incessante d'une meilleure performance des réseaux neuronaux se traduit par une augmentation des besoins en données, ce qui a un impact direct sur les coûts et la compétitivité des entreprises.
+
+ - L'adoption croissante des réseaux neuronaux soulève des questions cruciales concernant la rentabilité et la pérennité des entreprises face à l'évolution des coûts de l'apprentissage profond.
+ 
+- Le coût élevé des données d'entraînement pour les réseaux neuronaux représente un obstacle majeur au développement de l'intelligence artificielle dans de nombreux secteurs.
+
+-  L'impact économique de l'augmentation des coûts liés à l'acquisition de données peut se traduire par une réduction du nombre d'entreprises utilisant l'apprentissage profond, limitant ainsi son adoption et ses bénéfices potentiels.
+
+
+
+

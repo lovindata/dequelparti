@@ -1,0 +1,24 @@
+- Le risque de biais envers les individus non conformes aux nouvelles règles.
+- La menace d'exclusion pour ceux qui dérogent aux normes actuelles.
+- Un danger de préjugés à l'égard des personnes ne suivant pas les nouveaux standards.
+- La possibilité d'un traitement discriminatoire envers les non-conformistes.
+- Le risque d'inégalités face à la nouvelle norme imposée.
+- Un risque accru de discrimination envers ceux qui s'écartent des nouvelles conventions.
+- Une menace potentielle de marginalisation pour les individus dérogant aux nouvelles exigences.
+- La possibilité que les données augmentées perpétue un biais contre les non-conformistes.
+- Le danger d'un apprentissage biaisé envers les normes établies, excluant les divergences.
+- Un risque de création d'un système discriminatoire en s'appuyant sur des données augmentées non représentatives.
+- La menace que les nouvelles normes soient imposées de manière exclusive et discriminatoire.
+- Le danger de pérenniser des inégalités en privilégiant les données conformes aux normes actuelles.
+- Un risque de création d'un système opaque qui discrimine les individus hors norme.
+- La possibilité qu'une augmentation des données perpétue des stéréotypes négatifs envers les non-conformistes.
+- Une menace pour l'inclusion et la diversité si les nouvelles normes excluent une partie de la population.
+- Le risque que le modèle d'apprentissage favorise un conformisme social à travers les données augmentées.
+- Un danger d'exclusion sociale pour ceux qui ne respectent pas les nouveaux standards imposés par les données.
+- La possibilité qu'un système basé sur des données augmentées discrimine les individus atypiques.
+- Le risque que l'apprentissage automatique perpétue des biais existants envers les non-conformistes.
+- Un danger d'une amplification des inégalités si les données augmentées ne reflètent pas la réalité complète.
+- La menace qu'un système basé sur des données augmentées devienne un outil de contrôle social discriminatoire.
+- Le risque que les nouvelles normes soient imposées sans prendre en compte la diversité humaine. 
+
+
