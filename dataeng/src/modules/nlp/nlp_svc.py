@@ -90,7 +90,7 @@ class NLPSvc:
 
     def _build_lemma_embeddings(self, vocabulary: VocabularyVo) -> LemmaEmbeddingsVo:
         logger.info(f"Building word embeddings.")
-        lemmas = list(sorted(set(vocabulary.value.values())))
+        lemmas = list(sorted(set(vocabulary.root.values())))
         word_embedding_of_lemmas: Dict[str, List[float]] = {}
         for lemma in tqdm(lemmas):
             word_embedding_of_lemmas[lemma] = list(
