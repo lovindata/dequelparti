@@ -3,9 +3,9 @@ from dataclasses import dataclass
 from typing import List
 
 from src.confs import envs_conf
+from src.modules._old.nlp import nlp_svc
+from src.modules._old.nlp.slinding_avg_lemmas_vo import SlindingAvgLemmasVo
 from src.modules.file_system import file_system_svc
-from src.modules.nlp import nlp_svc
-from src.modules.nlp.slinding_avg_lemmas_vo import SlindingAvgLemmasVo
 
 
 @dataclass
@@ -15,6 +15,8 @@ class ProgramsExtractorSvc:
     file_system_svc = file_system_svc.impl
 
     def run(self) -> None:
+        ...
+        """
         def build_input_filepaths() -> List[str]:
             filenames = os.listdir(self.envs_conf.input_dirpath)
             input_filepaths = [
@@ -63,6 +65,7 @@ class ProgramsExtractorSvc:
         self.file_system_svc.write_as_json(vocabulary, output_vocabulary_path)
         self.file_system_svc.write_as_json(lemma_embeddings, output_sim_matrix_path)
         save_all_sliding_avg_lemmas(all_sliding_avg_lemmas, output_filepaths)
+        """
 
 
 impl = ProgramsExtractorSvc()

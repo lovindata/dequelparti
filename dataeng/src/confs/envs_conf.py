@@ -4,20 +4,11 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class EnvsConf:
-    vocabulary_dirpath: str = os.path.abspath(
-        os.getenv("DEQUELPARTI_VOCABULARY_DIRPATH", "../frontend/data/vocabulary")
-    )
-
     input_dirpath: str = os.path.abspath(
         os.getenv("DEQUELPARTI_INPUT_DIRPATH", "../frontend/public/programs")
     )
-    output_dirpath: str = os.path.abspath(
-        os.getenv("DEQUELPARTI_OUTPUT_DIRPATH", "../frontend/data")
-    )
-
     ollama_ip: str = os.getenv("DEQUELPARTI_OLLAMA_IP", "localhost")
     ollama_port: int = int(os.getenv("DEQUELPARTI_OLLAMA_PORT", "11434"))
-
     ollama_conf_get_prediction_cache_dirpath: str = os.path.abspath(
         os.getenv(
             "DEQUELPARTI_OLLAMA_CONF_GET_PREDICTION_CACHE_DIRPATH",
@@ -30,12 +21,23 @@ class EnvsConf:
             "./data/src/modules/llm_prep_svc/compute_llm_rows/cache",
         )
     )
-
-    sliding_avg_lemmas_window: int = int(
-        os.getenv("DEQUELPARTI_SLIDING_AVG_LEMMAS_WINDOW", "50")
+    prepare_data_svc_prepare_data_cache_dirpath: str = os.path.abspath(
+        os.getenv(
+            "DEQUELPARTI_PREPARE_DATA_SVC_PREPARE_DATA_CACHE_DIRPATH",
+            "./data/src/modules/prepare_data_svc/prepare_data/cache",
+        )
     )
-    sliding_avg_lemmas_stride: int = int(
-        os.getenv("DEQUELPARTI_SLIDING_AVG_LEMMAS_STRIDE", "10")
+    vocabulary_dirpath: str = os.path.abspath(
+        os.getenv(
+            "DEQUELPARTI_VOCABULARY_DIRPATH",
+            "../frontend/public/artifacts/dataeng/vocabulary",
+        )
+    )
+    model_filepath: str = os.path.abspath(
+        os.getenv(
+            "DEQUELPARTI_MODEL_DIRPATH",
+            "../frontend/public/artifacts/dataeng/model.onnx",
+        )
     )
 
 

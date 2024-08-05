@@ -50,13 +50,9 @@ def testing_build_torch_tensor():
             self.val_split = val_split
             self.batch_size = batch_size
             self.lr = lr
-            self._fc1 = nn.Linear(300, 2048)
-            self._fc2 = nn.Linear(2048, 1024)
-            self._fc3 = nn.Linear(1024, 512)
-            self._fc4 = nn.Linear(512, 256)
-            self._fc5 = nn.Linear(256, 128)
-            self._fc6 = nn.Linear(128, 64)
-            self._fc7 = nn.Linear(64, 3)
+            self._fc1 = nn.Linear(300, 256)
+            self._fc2 = nn.Linear(256, 128)
+            self._fc3 = nn.Linear(128, 3)
             self.dropout = nn.Dropout(0.5)
             self._loss_fn = nn.CrossEntropyLoss()
             self._accuracy = Accuracy(task="multiclass", num_classes=3)
@@ -67,15 +63,7 @@ def testing_build_torch_tensor():
             x = self.dropout(x)
             x = F.relu(self._fc2(x))
             x = self.dropout(x)
-            x = F.relu(self._fc3(x))
-            x = self.dropout(x)
-            x = F.relu(self._fc4(x))
-            x = self.dropout(x)
-            x = F.relu(self._fc5(x))
-            x = self.dropout(x)
-            x = F.relu(self._fc6(x))
-            x = self.dropout(x)
-            x = self._fc7(x)
+            x = self._fc3(x)
             return x
 
         def prepare_data(self) -> None:
@@ -146,7 +134,6 @@ def testing_build_torch_tensor():
                 list(spacy_conf.impl.spacy(llm_row.feature))
                 for llm_row in tqdm(llm_rows)
             ]
-
             tensor_per_feature = [
                 torch.vstack(
                     [
@@ -175,7 +162,7 @@ def testing_build_torch_tensor():
     def build_and_train_dnn(
         llm_rows: Sequence[LLMRowVo],
         vocabulary: VocabularyVo,
-        val_split=0.2,
+        val_split=0.30,
         batch_size=64,
         lr=0.001,
     ) -> DeQuelPartiLightningModule:

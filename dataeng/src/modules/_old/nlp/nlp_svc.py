@@ -8,11 +8,11 @@ from spellchecker import SpellChecker
 from tqdm import tqdm
 
 from src.confs import envs_conf
+from src.modules._old.nlp.lemma_embeddings_vo import LemmaEmbeddingsVo
+from src.modules._old.nlp.slinding_avg_lemmas_vo import SlindingAvgLemmasVo
+from src.modules._old.nlp.vocabulary_vo import VocabularyVo
 from src.modules.file_system.pdf_vo.pdf_page_vo import PdfPageVo
 from src.modules.file_system.pdf_vo.pdf_vo import PdfVo
-from src.modules.nlp.lemma_embeddings_vo import LemmaEmbeddingsVo
-from src.modules.nlp.slinding_avg_lemmas_vo import SlindingAvgLemmasVo
-from src.modules.nlp.vocabulary_vo import VocabularyVo
 
 
 @dataclass
@@ -81,14 +81,19 @@ class NLPSvc:
     def _build_all_sliding_avg_lemmas(
         self, batch_of_tokens: Sequence[Sequence[Token]], vocabulary: VocabularyVo
     ) -> List[SlindingAvgLemmasVo]:
+        ...
+        """
         logger.info(f"Lemmatizing tokens.")
         several_lemmas = [
             [vocabulary[token.text] for token in tokens if token.text in vocabulary]
             for tokens in batch_of_tokens
         ]
         return several_lemmas
+        """
 
     def _build_lemma_embeddings(self, vocabulary: VocabularyVo) -> LemmaEmbeddingsVo:
+        ...
+        """
         logger.info(f"Building word embeddings.")
         lemmas = list(sorted(set(vocabulary.root.values())))
         word_embedding_of_lemmas: Dict[str, List[float]] = {}
@@ -97,6 +102,7 @@ class NLPSvc:
                 [float(x) for x in self._nlp(lemma)[0].vector]
             )
         return LemmaEmbeddingsVo(word_embedding_of_lemmas)
+        """
 
     def _log_stats(
         self,
@@ -104,6 +110,8 @@ class NLPSvc:
         vocabulary: VocabularyVo,
         lemma_embeddings: LemmaEmbeddingsVo,
     ) -> None:
+        ...
+        """
         logger.info(
             f"Vocabulary of size {vocabulary.size()} with {vocabulary.nb_unique_lemmas()} unique lemmas."
         )
@@ -114,6 +122,7 @@ class NLPSvc:
             logger.info(
                 f"{len(lemmas)} lemmas for the batch '{i}'."
             )  # TODO James continue here!
+        """
 
 
 impl = NLPSvc()
