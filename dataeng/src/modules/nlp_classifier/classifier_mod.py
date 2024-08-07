@@ -93,11 +93,11 @@ class ClassifierMod(L.LightningModule):
 
     def get_early_stopping(self) -> EarlyStopping:
         return EarlyStopping(
-            monitor="val_acc",
+            monitor="val_loss",
             min_delta=0.001,
             patience=10,
             verbose=True,
-            mode="max",
+            mode="min",
         )
 
     def _step(
