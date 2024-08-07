@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from typing import Sequence
 
 import lightning as L
+from lightning.pytorch.callbacks.early_stopping import EarlyStopping
+from loguru import logger
 
 from src.confs import envs_conf, spacy_conf
 from src.modules.llm_prep.llm_row_vo import LLMRowVo
@@ -21,21 +23,19 @@ class NLPClassifierSvc:
     def build_and_train_classifier(
         self, llm_rows: Sequence[LLMRowVo], vocabulary: VocabularyVo
     ) -> ClassifierMod:
+        logger.info("Initializing the model.")
         model = ClassifierMod(
             llm_rows,
             vocabulary,
             self.prepare_data_svc.prepare_data,
         )
-        """
-        # early_stop_callback_f1 = EarlyStopping(
-        #     monitor="val_f1",  # Monitor validation F1 score
-        #     min_delta=0.00,
-        #     patience=3,
-        #     verbose=True,
-        #     mode="max",  # 'max' because we want to maximize F1 score
-        # )
-        """
-        trainer = L.Trainer(max_epochs=-1, logger=False, enable_checkpointing=False)
+        logger.info("Training the model.")
+        trainer = L.Trainer(
+            max_epochs=-1,
+            callbacks=model.get_early_stopping(),
+            logger=False,
+            enable_checkpointing=False,
+        )
         trainer.fit(model)
         return model
 

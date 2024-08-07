@@ -4,6 +4,7 @@ import lightning as L
 import torch
 import torch.nn.functional as F
 import torchmetrics
+from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 from torch import nn
 from torch.optim import adam, optimizer
 from torch.utils import data
@@ -85,6 +86,20 @@ class ClassifierMod(L.LightningModule):
     def test_step(self, batch: Tuple[torch.Tensor, torch.Tensor]) -> torch.Tensor:
         return self._step("test", batch)
 
+    def configure_optimizers(
+        self,
+    ) -> optimizer.Optimizer:
+        return adam.Adam(self.parameters(), lr=0.001)
+
+    def get_early_stopping(self) -> EarlyStopping:
+        return EarlyStopping(
+            monitor="val_acc",
+            min_delta=0.001,
+            patience=10,
+            verbose=True,
+            mode="max",
+        )
+
     def _step(
         self,
         step_kind: Literal["train", "val", "test"],
@@ -102,8 +117,3 @@ class ClassifierMod(L.LightningModule):
             prog_bar=True,
         )
         return loss
-
-    def configure_optimizers(
-        self,
-    ) -> optimizer.Optimizer:
-        return adam.Adam(self.parameters(), lr=0.001)

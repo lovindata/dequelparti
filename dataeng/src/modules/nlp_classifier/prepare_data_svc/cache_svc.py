@@ -1,17 +1,15 @@
 from __future__ import annotations
 
-import json
 import os
 import pickle
 from dataclasses import dataclass
 from hashlib import sha3_512
-from typing import Any, List, Sequence
+from typing import Sequence, Tuple
 
 import torch
 
 from src.confs import envs_conf
 from src.modules.file_system import file_system_svc
-from src.modules.file_system.pdf_vo.pdf_vo import PdfVo
 from src.modules.llm_prep.llm_row_vo import LLMRowVo
 from src.modules.vocabulary_prep.vocabulary_vo import VocabularyVo
 
@@ -21,81 +19,67 @@ class CacheSvc:
     envs_conf: envs_conf.EnvsConf = envs_conf.impl
     file_system_svc: file_system_svc.FileSystemSvc = file_system_svc.impl
 
-    def load_feature_tensor_cache_from_disk(
+    def load_feature_and_label_tensors_from_disk(
         self, llm_rows: Sequence[LLMRowVo], vocabulary: VocabularyVo
-    ) -> torch.Tensor | None:
-        ...
-        """
-        filename = self._build_filename(pdfs)
-        filepath = os.path.join(
-            self.envs_conf.llm_prep_svc_compute_llm_rows_cache_dirpath, filename
+    ) -> Tuple[torch.Tensor, torch.Tensor] | None:
+        feature_tensor_filepath, label_tensor_filepath = (
+            self._build_feature_and_label_tensors_filepath(llm_rows, vocabulary)
         )
-        if os.path.exists(filepath) is False:
+        if (
+            os.path.exists(feature_tensor_filepath) is False
+            or os.path.exists(label_tensor_filepath) is False
+        ):
             return None
-        with open(filepath, "r") as f:
-            llm_rows_as_python = json.load(f)
-        llm_rows = [
-            LLMRowVo.model_validate(llm_row_as_python)
-            for llm_row_as_python in llm_rows_as_python
-        ]
-        return llm_rows
-        """
-
-    def cache_feature_tensor_to_disk(self, feature_tensor: torch.Tensor) -> None:
-        ...
-        """
-        filename = self._build_filename(pdfs)
-        filepath = os.path.join(
-            self.envs_conf.llm_prep_svc_compute_llm_rows_cache_dirpath, filename
+        feature_tensor: torch.Tensor = torch.load(
+            feature_tensor_filepath, weights_only=True
         )
-        llm_rows_serialized = [rows.model_dump() for rows in llm_rows]
-        self.file_system_svc.write_as_json(llm_rows_serialized, filepath)
-        """
-
-    def load_label_tensor_cache_from_disk(
-        self, llm_rows: Sequence[LLMRowVo]
-    ) -> torch.Tensor | None:
-        ...
-        """
-        filename = self._build_filename(pdfs)
-        filepath = os.path.join(
-            self.envs_conf.llm_prep_svc_compute_llm_rows_cache_dirpath, filename
+        label_tensor: torch.Tensor = torch.load(
+            label_tensor_filepath, weights_only=True
         )
-        if os.path.exists(filepath) is False:
-            return None
-        with open(filepath, "r") as f:
-            llm_rows_as_python = json.load(f)
-        llm_rows = [
-            LLMRowVo.model_validate(llm_row_as_python)
-            for llm_row_as_python in llm_rows_as_python
-        ]
-        return llm_rows
-        """
+        return feature_tensor, label_tensor
 
-    def cache_label_tensor_to_disk(self, label_tensor: torch.Tensor) -> None:
-        ...
-        """
-        filename = self._build_filename(pdfs)
-        filepath = os.path.join(
-            self.envs_conf.llm_prep_svc_compute_llm_rows_cache_dirpath, filename
+    def save_feature_and_label_tensors_to_disk(
+        self,
+        llm_rows: Sequence[LLMRowVo],
+        vocabulary: VocabularyVo,
+        feature_tensor: torch.Tensor,
+        label_tensor: torch.Tensor,
+    ) -> None:
+        feature_tensor_filepath, label_tensor_filepath = (
+            self._build_feature_and_label_tensors_filepath(llm_rows, vocabulary)
         )
-        llm_rows_serialized = [rows.model_dump() for rows in llm_rows]
-        self.file_system_svc.write_as_json(llm_rows_serialized, filepath)
-        """
+        torch.save(feature_tensor, feature_tensor_filepath)
+        torch.save(label_tensor, label_tensor_filepath)
 
-    def _build_feature_tensor_filename(
+    def _build_feature_and_label_tensors_filepath(
         self, llm_rows: Sequence[LLMRowVo], vocabulary: VocabularyVo
-    ) -> str:
-        ...
-        """
-        return f"{sha3_512(pickle.dumps(pdfs)).hexdigest()}.json"
-        """
+    ) -> Tuple[str, str]:
+        def build_feature_tensor_filename() -> str:
+            llm_rows_bytes = pickle.dumps(llm_rows)
+            vocabulary_bytes = pickle.dumps(vocabulary)
+            args_identifier = llm_rows_bytes + vocabulary_bytes
+            return f"feature_tensor_{sha3_512(pickle.dumps(args_identifier)).hexdigest()}.pt"
 
-    def _build_label_tensor_filename(self, llm_rows: Sequence[LLMRowVo]) -> str:
-        ...
-        """
-        return f"{sha3_512(pickle.dumps(pdfs)).hexdigest()}.json"
-        """
+        def build_label_tensor_filename() -> str:
+            llm_rows_bytes = pickle.dumps(llm_rows)
+            return (
+                f"label_tensor_{sha3_512(pickle.dumps(llm_rows_bytes)).hexdigest()}.pt"
+            )
+
+        os.makedirs(
+            self.envs_conf.prepare_data_svc_prepare_data_cache_dirpath, exist_ok=True
+        )
+        feature_tensor_filename = build_feature_tensor_filename()
+        feature_tensor_filepath = os.path.join(
+            self.envs_conf.prepare_data_svc_prepare_data_cache_dirpath,
+            feature_tensor_filename,
+        )
+        label_tensor_filename = build_label_tensor_filename()
+        label_tensor_filepath = os.path.join(
+            self.envs_conf.prepare_data_svc_prepare_data_cache_dirpath,
+            label_tensor_filename,
+        )
+        return feature_tensor_filepath, label_tensor_filepath
 
 
 impl = CacheSvc()
