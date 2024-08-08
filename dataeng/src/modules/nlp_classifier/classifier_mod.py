@@ -2,7 +2,6 @@ from typing import Callable, Literal, Sequence, Tuple
 
 import lightning as L
 import torch
-import torch.nn.functional as F
 import torchmetrics
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 from torch import nn
@@ -26,10 +25,13 @@ class ClassifierMod(L.LightningModule):
         self.llm_rows = llm_rows
         self.vocabulary = vocabulary
         self.f_prepare_feature_and_label_tensors = f_prepare_feature_and_label_tensors
-        self._fc1 = nn.Linear(300, 256)
-        self._fc2 = nn.Linear(256, 128)
-        self._fc3 = nn.Linear(128, 3)
-        self.dropout = nn.Dropout(0.5)
+        self._layer1 = nn.Sequential(
+            nn.Linear(300, 256), nn.BatchNorm1d(256), nn.ReLU(), nn.Dropout()
+        )
+        self._layer2 = nn.Sequential(
+            nn.Linear(256, 128), nn.BatchNorm1d(128), nn.ReLU(), nn.Dropout()
+        )
+        self._layer3 = nn.Linear(128, 3)
         self._loss_fn = nn.CrossEntropyLoss()
         self._accuracy = torchmetrics.Accuracy(task="multiclass", num_classes=3)
         self._f1_score = torchmetrics.F1Score(
@@ -37,11 +39,9 @@ class ClassifierMod(L.LightningModule):
         )
 
     def forward(self, x: torch.Tensor):
-        x = F.relu(self._fc1(x))
-        x = self.dropout(x)
-        x = F.relu(self._fc2(x))
-        x = self.dropout(x)
-        x = self._fc3(x)
+        x = self._layer1(x)
+        x = self._layer2(x)
+        x = self._layer3(x)
         return x
 
     def prepare_data(self) -> None:
@@ -95,7 +95,7 @@ class ClassifierMod(L.LightningModule):
         return EarlyStopping(
             monitor="val_loss",
             min_delta=0.001,
-            patience=10,
+            patience=20,
             verbose=True,
             mode="min",
         )
@@ -105,15 +105,31 @@ class ClassifierMod(L.LightningModule):
         step_kind: Literal["train", "val", "test"],
         batch: Tuple[torch.Tensor, torch.Tensor],
     ) -> torch.Tensor:
+        def compute_l1_reg_loss(lambda_l1: float) -> torch.Tensor:
+            l1_loss = torch.sum(
+                torch.stack(
+                    [torch.sum(torch.abs(param)) for param in self.parameters()]
+                )
+            )
+            return lambda_l1 * l1_loss
+
         x, y = batch
         y_pred = self.forward(x)
+        l1_reg_loss = compute_l1_reg_loss(lambda_l1=0.00000)
         loss: torch.Tensor = self._loss_fn(y_pred, y)
+        total_loss = loss + l1_reg_loss
         acc: torch.Tensor = self._accuracy(y_pred, y)
         f1: torch.Tensor = self._f1_score(y_pred, y)
+        scores = {
+            "loss": loss,
+            "l1_reg_loss": l1_reg_loss,
+            "acc": acc,
+            "f1": f1,
+        }
         self.log_dict(
-            {f"{step_kind}_loss": loss, f"{step_kind}_acc": acc, f"{step_kind}_f1": f1},
+            {f"{step_kind}_{score_key}": scores[score_key] for score_key in scores},
             on_step=False,
             on_epoch=True,
             prog_bar=True,
         )
-        return loss
+        return total_loss

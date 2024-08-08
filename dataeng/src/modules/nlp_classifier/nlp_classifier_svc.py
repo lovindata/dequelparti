@@ -37,6 +37,9 @@ class NLPClassifierSvc:
             enable_checkpointing=False,
         )
         trainer.fit(model)
+        logger.info("Computing model final validation and test scores.")
+        trainer.validate(model)
+        trainer.test(model)
         return model
 
 

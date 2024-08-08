@@ -23,7 +23,7 @@ class CacheSvc:
         self, llm_rows: Sequence[LLMRowVo], vocabulary: VocabularyVo
     ) -> Tuple[torch.Tensor, torch.Tensor] | None:
         feature_tensor_filepath, label_tensor_filepath = (
-            self._build_feature_and_label_tensors_filepath(llm_rows, vocabulary)
+            self._build_feature_and_label_tensors_filepaths(llm_rows, vocabulary)
         )
         if (
             os.path.exists(feature_tensor_filepath) is False
@@ -46,12 +46,12 @@ class CacheSvc:
         label_tensor: torch.Tensor,
     ) -> None:
         feature_tensor_filepath, label_tensor_filepath = (
-            self._build_feature_and_label_tensors_filepath(llm_rows, vocabulary)
+            self._build_feature_and_label_tensors_filepaths(llm_rows, vocabulary)
         )
         torch.save(feature_tensor, feature_tensor_filepath)
         torch.save(label_tensor, label_tensor_filepath)
 
-    def _build_feature_and_label_tensors_filepath(
+    def _build_feature_and_label_tensors_filepaths(
         self, llm_rows: Sequence[LLMRowVo], vocabulary: VocabularyVo
     ) -> Tuple[str, str]:
         def build_feature_tensor_filename() -> str:
