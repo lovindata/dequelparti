@@ -1,14 +1,17 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from typing import Sequence
 
 import lightning as L
-from lightning.pytorch.callbacks.early_stopping import EarlyStopping
+import torch
 from loguru import logger
+from onnxscript import opset20
 
 from src.confs import envs_conf, spacy_conf
 from src.modules.llm_prep.llm_row_vo import LLMRowVo
+from src.modules.nlp_classifier.classifier_data_mod import ClassifierDataMod
 from src.modules.nlp_classifier.classifier_mod import ClassifierMod
 from src.modules.nlp_classifier.prepare_data_svc import prepare_data_svc
 from src.modules.vocabulary_prep.vocabulary_vo import VocabularyVo
@@ -20,27 +23,49 @@ class NLPClassifierSvc:
     spacy_conf: spacy_conf.SpacyConf = spacy_conf.impl
     prepare_data_svc: prepare_data_svc.PrepareDataSvc = prepare_data_svc.impl
 
-    def build_and_train_classifier(
+    def train_and_export_classifier(
+        self, llm_rows: Sequence[LLMRowVo], vocabulary: VocabularyVo
+    ) -> None:
+        model = self._get_and_train_model(llm_rows, vocabulary)
+        self._save_as_onnx(model)
+
+    def _get_and_train_model(
         self, llm_rows: Sequence[LLMRowVo], vocabulary: VocabularyVo
     ) -> ClassifierMod:
-        logger.info("Initializing the model.")
+        logger.info("Initializing the data and model.")
+        data = ClassifierDataMod(
+            llm_rows, vocabulary, self.prepare_data_svc.prepare_data
+        )
         model = ClassifierMod(
-            llm_rows,
-            vocabulary,
-            self.prepare_data_svc.prepare_data,
+            # llm_rows,
+            # vocabulary,
+            # self.prepare_data_svc.prepare_data,
         )
         logger.info("Training the model.")
+        model_checkpoint = ClassifierMod.model_checkpoint()
         trainer = L.Trainer(
-            max_epochs=-1,
-            callbacks=model.get_early_stopping(),
+            default_root_dir=self.envs_conf.nlp_classifier_svc__get_and_train_model_cache_dirpath,
+            max_epochs=1,
+            callbacks=[
+                ClassifierMod.early_stopping(),
+                model_checkpoint,
+            ],
             logger=False,
-            enable_checkpointing=False,
         )
-        trainer.fit(model)
+        trainer.fit(model, data)
+        logger.info("Loading the checkpointed best model.")
+        model = ClassifierMod.load_from_checkpoint(model_checkpoint.best_model_path)
         logger.info("Computing model final validation and test scores.")
-        trainer.validate(model)
-        trainer.test(model)
+        trainer.validate(model, data)
+        trainer.test(model, data)
         return model
+
+    def _save_as_onnx(self, model: ClassifierMod) -> None:
+        logger.info("Saving classifier model in ONNX format.")
+        os.makedirs(os.path.dirname(self.envs_conf.model_filepath))
+        torch.onnx.export(
+            model, torch.randn(1, 300), opset_version=21
+        )  # https://github.com/onnx/onnx/blob/main/docs/Versioning.md
 
 
 impl = NLPClassifierSvc()

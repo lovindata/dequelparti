@@ -27,6 +27,12 @@ class EnvsConf:
             "./data/src/modules/prepare_data_svc/prepare_data/cache",
         )
     )
+    nlp_classifier_svc__get_and_train_model_cache_dirpath: str = os.path.abspath(
+        os.getenv(
+            "DEQUELPARTI_NLP_CLASSIFIER_SVC_GET__AND_TRAIN_MODEL_CACHE_DIRPATH",
+            "./data/src/modules/nlp_classifier_svc/_get_and_train_model/cache",
+        )
+    )
     vocabulary_dirpath: str = os.path.abspath(
         os.getenv(
             "DEQUELPARTI_VOCABULARY_DIRPATH",

@@ -12,7 +12,7 @@ def main() -> None:
     vocabulary = vocabulary_prep_svc.impl.compute_vocabulary()
     pdfs = file_system_svc.impl.read_pdfs(envs_conf.impl.input_dirpath)
     llm_rows = llm_prep_svc.impl.compute_llm_rows(pdfs, vocabulary)
-    model = nlp_classifier_svc.impl.build_and_train_classifier(llm_rows, vocabulary)
+    nlp_classifier_svc.impl.train_and_export_classifier(llm_rows, vocabulary)
 
 
 if __name__ == "__main__":
