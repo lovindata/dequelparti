@@ -5,9 +5,9 @@ from dataclasses import dataclass
 from typing import Sequence
 
 import lightning as L
+import onnx
 import torch
 from loguru import logger
-from onnxscript import opset20
 
 from src.confs import envs_conf, spacy_conf
 from src.modules.llm_prep.llm_row_vo import LLMRowVo
@@ -36,16 +36,12 @@ class NLPClassifierSvc:
         data = ClassifierDataMod(
             llm_rows, vocabulary, self.prepare_data_svc.prepare_data
         )
-        model = ClassifierMod(
-            # llm_rows,
-            # vocabulary,
-            # self.prepare_data_svc.prepare_data,
-        )
+        model = ClassifierMod()
         logger.info("Training the model.")
         model_checkpoint = ClassifierMod.model_checkpoint()
         trainer = L.Trainer(
             default_root_dir=self.envs_conf.nlp_classifier_svc__get_and_train_model_cache_dirpath,
-            max_epochs=1,
+            max_epochs=-1,
             callbacks=[
                 ClassifierMod.early_stopping(),
                 model_checkpoint,
@@ -62,10 +58,11 @@ class NLPClassifierSvc:
 
     def _save_as_onnx(self, model: ClassifierMod) -> None:
         logger.info("Saving classifier model in ONNX format.")
-        os.makedirs(os.path.dirname(self.envs_conf.model_filepath))
+        os.makedirs(os.path.dirname(self.envs_conf.model_filepath), exist_ok=True)
         torch.onnx.export(
-            model, torch.randn(1, 300), opset_version=21
+            model, torch.randn(1, 300), self.envs_conf.model_filepath, opset_version=20
         )  # https://github.com/onnx/onnx/blob/main/docs/Versioning.md
+        onnx.checker.check_model(onnx.load(self.envs_conf.model_filepath))
 
 
 impl = NLPClassifierSvc()
