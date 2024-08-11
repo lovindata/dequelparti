@@ -41,7 +41,7 @@ from src.modules.vocabulary_prep import vocabulary_prep_svc
 from src.modules.vocabulary_prep.vocabulary_vo import VocabularyVo
 
 
-def testing_all_MiniLM_L6_v2():
+def testing_all_MiniLM_L6_v2_installation_and_simple_usage():
     def get_embedding(
         tokenizer: BertTokenizerFast, model: BertModel, sentence: str
     ) -> torch.Tensor:
@@ -49,7 +49,6 @@ def testing_all_MiniLM_L6_v2():
         model.eval()
         with torch.no_grad():
             outputs: BaseModelOutputWithPoolingAndCrossAttentions = model(**inputs)
-            print(type(outputs))
         embeddings = outputs.last_hidden_state.mean(dim=1).squeeze()
         return embeddings
 
@@ -62,16 +61,20 @@ def testing_all_MiniLM_L6_v2():
         return (dot_product / (norm1 * norm2)).item()
 
     tokenizer: BertTokenizerFast = AutoTokenizer.from_pretrained(
-        "sentence-transformers/all-MiniLM-L6-v2",
-        cache_dir="./draft/all_MiniLM_L6_v2/tokenizer",
+        # "sentence-transformers/all-MiniLM-L6-v2",
+        "./draft/all_MiniLM_L6_v2/tokenizer_prod",
+        # "draft/all_MiniLM_L6_v2/model/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/8b3219a92973c328a8e22fadcfa821b5dc75636a/config.json",
+        # cache_dir="./draft/all_MiniLM_L6_v2/tokenizer",
         clean_up_tokenization_spaces=True,
     )  # type: ignore
+    # tokenizer.save_pretrained("./draft/all_MiniLM_L6_v2/tokenizer_prod")
     model: BertModel = AutoModel.from_pretrained(
-        "sentence-transformers/all-MiniLM-L6-v2",
-        cache_dir="./draft/all_MiniLM_L6_v2/model",
+        # "sentence-transformers/all-MiniLM-L6-v2",
+        "./draft/all_MiniLM_L6_v2/model_prod"
+        # "./draft/all_MiniLM_L6_v2/model",
+        # cache_dir="./draft/all_MiniLM_L6_v2/model",
     )  # type: ignore
-    print(type(tokenizer))
-    print(type(model))
+    # model.save_pretrained("./draft/all_MiniLM_L6_v2/model_prod")
 
     input = "That is a happy person"
     input = get_embedding(tokenizer, model, input)
@@ -87,7 +90,7 @@ def testing_all_MiniLM_L6_v2():
     print(scores)
 
 
-testing_all_MiniLM_L6_v2()
+testing_all_MiniLM_L6_v2_installation_and_simple_usage()
 
 
 def testing_onnx_model_predict():
