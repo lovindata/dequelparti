@@ -1,6 +1,7 @@
 import hashlib
 import os
 import pickle
+import sys
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -9,6 +10,8 @@ from typing import Any, Generator, List, Mapping, Sequence, Tuple
 
 import lightning as L
 import numpy as np
+import onnx
+import onnxruntime as ort
 import plotly.express as px
 import spacy
 import torch
@@ -25,6 +28,10 @@ from torch import Tensor, nn, optim
 from torch.utils.data import DataLoader, TensorDataset, random_split
 from torchmetrics import Accuracy, F1Score
 from tqdm import tqdm
+from transformers import AutoModel, AutoTokenizer
+from transformers.modeling_outputs import BaseModelOutputWithPoolingAndCrossAttentions
+from transformers.models.bert.modeling_bert import BertModel
+from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 
 from src.confs import envs_conf, spacy_conf
 from src.modules.file_system import file_system_svc
@@ -32,6 +39,96 @@ from src.modules.llm_prep import llm_prep_svc
 from src.modules.llm_prep.llm_row_vo import LLMRowVo
 from src.modules.vocabulary_prep import vocabulary_prep_svc
 from src.modules.vocabulary_prep.vocabulary_vo import VocabularyVo
+
+
+def testing_all_MiniLM_L6_v2():
+    def get_embedding(
+        tokenizer: BertTokenizerFast, model: BertModel, sentence: str
+    ) -> torch.Tensor:
+        inputs = tokenizer(sentence, return_tensors="pt", truncation=True, padding=True)
+        model.eval()
+        with torch.no_grad():
+            outputs: BaseModelOutputWithPoolingAndCrossAttentions = model(**inputs)
+            print(type(outputs))
+        embeddings = outputs.last_hidden_state.mean(dim=1).squeeze()
+        return embeddings
+
+    def cosine_similarity_pytorch(
+        tensor1: torch.Tensor, tensor2: torch.Tensor
+    ) -> float:
+        dot_product = torch.dot(tensor1, tensor2)
+        norm1 = torch.norm(tensor1)
+        norm2 = torch.norm(tensor2)
+        return (dot_product / (norm1 * norm2)).item()
+
+    tokenizer: BertTokenizerFast = AutoTokenizer.from_pretrained(
+        "sentence-transformers/all-MiniLM-L6-v2",
+        cache_dir="./draft/all_MiniLM_L6_v2/tokenizer",
+        clean_up_tokenization_spaces=True,
+    )  # type: ignore
+    model: BertModel = AutoModel.from_pretrained(
+        "sentence-transformers/all-MiniLM-L6-v2",
+        cache_dir="./draft/all_MiniLM_L6_v2/model",
+    )  # type: ignore
+    print(type(tokenizer))
+    print(type(model))
+
+    input = "That is a happy person"
+    input = get_embedding(tokenizer, model, input)
+
+    docs = [
+        "That is a happy dog",
+        "That is a very happy person",
+        "Today is a sunny day",
+    ]
+    docs = [get_embedding(tokenizer, model, doc) for doc in docs]
+
+    scores = [cosine_similarity_pytorch(input, doc) for doc in docs]
+    print(scores)
+
+
+testing_all_MiniLM_L6_v2()
+
+
+def testing_onnx_model_predict():
+    def softmax(x):
+        # Shift the input x by subtracting the maximum value for numerical stability
+        e_x = np.exp(x - np.max(x))
+        return e_x / e_x.sum(axis=-1, keepdims=True)
+
+    vocabulary = vocabulary_prep_svc.impl.compute_vocabulary()
+    ort_sess = ort.InferenceSession(envs_conf.impl.model_filepath)
+    input_name: str = ort_sess.get_inputs()[0].name
+    output_name: str = ort_sess.get_outputs()[0].name
+    while True:
+        print("Enter text (type 'exit' to quit):")
+        # Read a line from standard input
+        line = sys.stdin.readline().strip()
+
+        # Check for termination condition
+        if line.lower() == "exit":
+            print("Exiting...")
+            break
+
+        # Process the input line
+        line = [word for word in line.split(" ") if word in vocabulary.root]
+        if not line:
+            continue
+        print(f"You entered: {line}")
+        input_data_vector: NDArray[np.float32] = np.array(
+            [vocabulary.root[word] for word in line],
+            dtype=np.float32,
+        )
+        input_data_vector = np.mean(input_data_vector, axis=0, keepdims=True)
+        print(input_data_vector.shape)
+
+        # Predict
+        results = ort_sess.run([output_name], {input_name: input_data_vector})
+        output_data = softmax(results[0])
+        print(output_data)
+
+
+# testing_onnx_model_predict()
 
 
 def testing_build_torch_tensor():
@@ -187,7 +284,7 @@ def testing_build_torch_tensor():
     dequelparti_dnn = build_and_train_dnn(llm_rows, vocabulary)
 
 
-testing_build_torch_tensor()
+# testing_build_torch_tensor()
 
 
 def testing_pickle_sha3_512():
