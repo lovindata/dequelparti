@@ -17,13 +17,13 @@ lightning = "^2.3.3"
 torchmetrics = "^1.4.1"
 onnx = "^1.16.2"
 onnxscript = "^0.1.0.dev20240809"
+onnxruntime-gpu = { version = "^1.18.1", source = "onnxruntime-cuda-12" }
 
 [tool.poetry.group.dev.dependencies]
 pydantic = "^2.8.2"
 plotly = "^5.23.0"
 scikit-learn = "^1.5.1"
 pandas = "^2.2.2"
-onnxruntime = "^1.18.1"
 transformers = "^4.44.0"
 
 
@@ -32,6 +32,11 @@ name = "pytorch-cu124"
 url = "https://download.pytorch.org/whl/cu124"
 priority = "explicit"
 
+
+[[tool.poetry.source]]
+name = "onnxruntime-cuda-12"
+url = "https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/"
+priority = "explicit"
 
 [build-system]
 requires = ["poetry-core"]

@@ -10,7 +10,6 @@ from typing import Any, Generator, List, Mapping, Sequence, Tuple
 
 import lightning as L
 import numpy as np
-import onnx
 import onnxruntime as ort
 import plotly.express as px
 import spacy
@@ -39,6 +38,39 @@ from src.modules.llm_prep import llm_prep_svc
 from src.modules.llm_prep.llm_row_vo import LLMRowVo
 from src.modules.vocabulary_prep import vocabulary_prep_svc
 from src.modules.vocabulary_prep.vocabulary_vo import VocabularyVo
+
+
+def testing_all_MiniLM_L6_v2_onnx_as_python():
+    tokenizer: BertTokenizerFast = AutoTokenizer.from_pretrained(
+        "../frontend/public/artifacts/all-MiniLM-L6-v2",
+        clean_up_tokenization_spaces=True,
+    )  # type: ignore
+    ort_sess = ort.InferenceSession(
+        "../frontend/public/artifacts/all-MiniLM-L6-v2/onnx/model.onnx",
+        providers=["TensorrtExecutionProvider"],
+    )
+    for input in ort_sess.get_inputs():
+        print("input", type(input), input)
+    for output in ort_sess.get_outputs():
+        print("output", type(output), output)
+
+    input = "That is a happy person"
+    input_tokenized = tokenizer(
+        input, return_tensors="np", truncation=True, padding=True
+    )
+    input_ids: NDArray[np.int64] = input_tokenized["input_ids"]  # type: ignore
+    print("input_ids", type(input_ids), type(input_ids[0][0]))
+    attention_mask: NDArray[np.int64] = input_tokenized["attention_mask"]  # type: ignore
+    print("attention_mask", type(attention_mask), type(attention_mask[0][0]))
+
+    output: NDArray[np.float32] = ort_sess.run(
+        ["sentence_embedding"],
+        {"input_ids": input_ids, "attention_mask": attention_mask},
+    )
+    print("output", type(output), output)
+
+
+testing_all_MiniLM_L6_v2_onnx_as_python()
 
 
 def testing_all_MiniLM_L6_v2_installation_and_simple_usage():
@@ -90,7 +122,7 @@ def testing_all_MiniLM_L6_v2_installation_and_simple_usage():
     print(scores)
 
 
-testing_all_MiniLM_L6_v2_installation_and_simple_usage()
+# testing_all_MiniLM_L6_v2_installation_and_simple_usage()
 
 
 def testing_onnx_model_predict():
