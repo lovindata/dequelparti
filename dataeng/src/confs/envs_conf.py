@@ -7,6 +7,12 @@ class EnvsConf:
     input_dirpath: str = os.path.abspath(
         os.getenv("DEQUELPARTI_INPUT_DIRPATH", "../frontend/public/programs")
     )
+    embedding_model_dirpath = os.path.abspath(
+        os.getenv(
+            "DEQUELPARTI_EMBEDDING_MODEL_DIRPATH",
+            "../frontend/public/artifacts/all-MiniLM-L6-v2",
+        )
+    )
     ollama_ip: str = os.getenv("DEQUELPARTI_OLLAMA_IP", "localhost")
     ollama_port: int = int(os.getenv("DEQUELPARTI_OLLAMA_PORT", "11434"))
     ollama_conf_get_prediction_cache_dirpath: str = os.path.abspath(

@@ -32,12 +32,77 @@ from transformers.modeling_outputs import BaseModelOutputWithPoolingAndCrossAtte
 from transformers.models.bert.modeling_bert import BertModel
 from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 
-from src.confs import envs_conf, spacy_conf
+from src.confs import all_minilm_l6_v2_conf, envs_conf, spacy_conf
 from src.modules.file_system import file_system_svc
 from src.modules.llm_prep import llm_prep_svc
 from src.modules.llm_prep.llm_row_vo import LLMRowVo
 from src.modules.vocabulary_prep import vocabulary_prep_svc
 from src.modules.vocabulary_prep.vocabulary_vo import VocabularyVo
+
+
+def testing_batch_embedding():
+    docs = [
+        "That is a happy person",
+        "That is a happy dog",
+        "That is a very happy person",
+        "Today is a sunny day",
+    ]
+    print(all_minilm_l6_v2_conf.impl.embed(docs))
+
+
+# testing_batch_embedding()
+
+
+def testing_sliding_window_tokenizer():
+    text = """Réparer les services publics
+• Organiser une conférence de sauvetage de l’hôpital public afin 
+d’éviter la saturation pendant l’été, proposer la revalorisation du 
+travail de nuit et du week-end pour ses personnels 
+• Redonner à l’école publique son objectif d’émancipation en 
+abrogeant le « choc des savoirs » de Macron, et préserver la 
+liberté pédagogique
+• Faire les premier pas pour la gratuité intégrale à l’école : cantine 
+scolaire, fournitures, transports, activités périscolaires 
+• Augmenter le montant du Pass’Sport à 150 euros et étendre son 
+utilisation au sport scolaire en vue de la rentrée
+Apaiser
+• Relancer la création d’emplois aidés pour les associations, 
+notamment sportives et d’éducation populaire
+• Déployer de premières équipes de police de proximité, interdire 
+les LBD et les grenades mutilantes, et démanteler les BRAV-M
+Retrouver la paix en Kanaky-Nouvelle Calédonie
+• Abandonner le processus de réforme constitutionnelle visant 
+au dégel immédiat du corps électoral. C’est un geste fort 
+d’apaisement qui permettra de retrouver le chemin du dialogue 
+et de la recherche du consensus. À travers la mission de 
+dialogue, renouer avec la promesse du « destin commun », dans 
+l’esprit des accords de Matignon et de Nouméa et d’impartialité 
+de l’État, en soutenant la recherche d’un projet d’accord global 
+qui engage un véritable processus d’émancipation et de 
+décolonisation.
+Mettre à l’ordre du jour des changements en Europe
+• Refuser les contraintes austéritaires du pacte budgétaire 
+• Proposer une réforme de la Politique agricole commune (PAC)
+"""
+
+    tokenizer: BertTokenizerFast = AutoTokenizer.from_pretrained(
+        "../frontend/public/artifacts/all-MiniLM-L6-v2",
+        clean_up_tokenization_spaces=True,
+    )  # type: ignore
+    text_tokenized = tokenizer(
+        text,
+        return_tensors="np",
+        return_overflowing_tokens=True,
+        max_length=128,
+        truncation=True,
+        stride=64,
+    )
+    input_ids: NDArray[np.int64] = text_tokenized["input_ids"]  # type: ignore
+    print("\n".join(tokenizer.batch_decode(input_ids)))
+    print("input_ids", type(input_ids), type(input_ids[0]), type(input_ids[0][0]))
+
+
+testing_sliding_window_tokenizer()
 
 
 def testing_all_MiniLM_L6_v2_onnx_as_python():
@@ -47,7 +112,7 @@ def testing_all_MiniLM_L6_v2_onnx_as_python():
     )  # type: ignore
     ort_sess = ort.InferenceSession(
         "../frontend/public/artifacts/all-MiniLM-L6-v2/onnx/model.onnx",
-        providers=["TensorrtExecutionProvider"],
+        providers=["CUDAExecutionProvider", "CPUExecutionProvider"],
     )
     for input in ort_sess.get_inputs():
         print("input", type(input), input)
@@ -70,7 +135,7 @@ def testing_all_MiniLM_L6_v2_onnx_as_python():
     print("output", type(output), output)
 
 
-testing_all_MiniLM_L6_v2_onnx_as_python()
+# testing_all_MiniLM_L6_v2_onnx_as_python()
 
 
 def testing_all_MiniLM_L6_v2_installation_and_simple_usage():
