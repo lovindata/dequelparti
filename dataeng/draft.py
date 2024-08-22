@@ -1,56 +1,175 @@
-import hashlib
-import os
-import pickle
+import json
 import sys
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from dataclasses import dataclass
 from hashlib import sha3_512
-from typing import Any, Generator, List, Mapping, Sequence, Tuple
+from typing import Any, Dict, Generator, List
 
-# import lightning as L
 import numpy as np
 import onnxruntime as ort
-
-# import plotly.express as px
-# import spacy
-# import torch
-# import torch.nn.functional as F
-from loguru import logger
 from numpy.typing import NDArray
-
-# from ollama import Client
-from PyPDF2 import PdfReader
-
-# from sklearn.decomposition import PCA
-# from sklearn.preprocessing import StandardScaler
-# from spacy.tokens import Token
-# from spellchecker import SpellChecker
-# from torch import Tensor, nn, optim
-# from torch.utils.data import DataLoader, TensorDataset, random_split
-# from torchmetrics import Accuracy, F1Score
-from tqdm import tqdm
-from transformers import AutoModel, AutoTokenizer
-from transformers.modeling_outputs import BaseModelOutputWithPoolingAndCrossAttentions
-from transformers.models.bert.modeling_bert import BertModel
+from sklearn.metrics.pairwise import cosine_similarity
+from transformers import AutoTokenizer
 from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 
-from src.confs import all_minilm_l6_v2_conf, envs_conf
-from src.modules.file_system import file_system_svc
+from src.confs import envs_conf
+from src.modules.shared.atomic_vos.molecules.embedding_row_vo import EmbeddingRowVo
+from src.modules.shared.atomic_vos.organisms.embedding_table_vo import EmbeddingTableVo
+from src.modules.vector_database import vector_database_svc
 
 
-def testing_batch_embedding():
-    docs = [
-        "That is a happy person",
-        "That is a happy dog",
-        "That is a very happy person",
-        "Today is a sunny day",
+def testing_vector_database_interactively():
+    # Prep
+    with open(envs_conf.impl.vector_database_filepath, "r") as file:
+        embedding_table_as_dicts: List[Dict[str, Any]] = json.load(file)
+    embedding_table: EmbeddingTableVo = [
+        EmbeddingRowVo(**embedding_row_as_dict)
+        for embedding_row_as_dict in embedding_table_as_dicts
     ]
-    doc_embeddings = [all_minilm_l6_v2_conf.impl.embed(doc) for doc in docs]
-    print("doc_embeddings", type(doc_embeddings), doc_embeddings)
+    labels = sorted(
+        list(set([embedding_row.label for embedding_row in embedding_table]))
+    )
+    embedding_tables: List[EmbeddingTableVo] = [
+        [
+            embedding_row
+            for embedding_row in embedding_table
+            if embedding_row.label == label
+        ]
+        for label in labels
+    ]
+
+    # Interact
+    while True:
+        print("Enter text (type 'exit' to quit):")
+        line = sys.stdin.readline().strip()
+        if line.lower() == "exit":
+            print("Exiting...")
+            break
+        if not line:
+            continue
+        print(f"You entered: {line}")
+
+        _, line_vector_embedding = vector_database_svc.impl._embed(line)[0]
+        top_k_rows_per_label = [
+            sorted(
+                embedding_table,
+                key=lambda embedding_row: cosine_similarity(
+                    np.array(line_vector_embedding, dtype=np.float32).reshape(1, -1),
+                    np.array(embedding_row.vector_embedding, dtype=np.float32).reshape(
+                        1, -1
+                    ),
+                )[0, 0],
+                reverse=True,
+            )[:1]
+            for embedding_table in embedding_tables
+        ]
+        for rows in top_k_rows_per_label:
+            line_vector_embedding = np.array(
+                line_vector_embedding, dtype=np.float32
+            ).reshape(1, -1)
+            top_k_vector_embeddings = np.array(
+                [row.vector_embedding for row in rows], dtype=np.float32
+            )
+            scores = cosine_similarity(
+                line_vector_embedding,
+                top_k_vector_embeddings,
+            )
+            print(f"{rows[0].label}: {scores} (={np.mean(scores)})")
+            print("-" + "\n-".join([row.decoded_embedding for row in rows]))
+            print("\n")
 
 
-# testing_batch_embedding()
+testing_vector_database_interactively()
+
+
+def testing_sklearn_cossim():
+    # Example vectors
+    vec_a = np.array([[1.0, 2.0, 3.0]])
+    vec_b = np.array([[4.0, 5.0, 6.0]])
+
+    # Compute cosine similarity
+    similarity = cosine_similarity(vec_a, vec_b)
+
+    print(f"Cosine Similarity: {similarity}")
+
+
+# testing_sklearn_cossim()
+
+
+def testing_sliding_window_embeddings():
+    text = """Réparer les services publics
+• Organiser une conférence de sauvetage de l’hôpital public afin 
+d’éviter la saturation pendant l’été, proposer la revalorisation du 
+travail de nuit et du week-end pour ses personnels 
+• Redonner à l’école publique son objectif d’émancipation en 
+abrogeant le « choc des savoirs » de Macron, et préserver la 
+liberté pédagogique
+• Faire les premier pas pour la gratuité intégrale à l’école : cantine 
+scolaire, fournitures, transports, activités périscolaires 
+• Augmenter le montant du Pass’Sport à 150 euros et étendre son 
+utilisation au sport scolaire en vue de la rentrée
+Apaiser
+• Relancer la création d’emplois aidés pour les associations, 
+notamment sportives et d’éducation populaire
+• Déployer de premières équipes de police de proximité, interdire 
+les LBD et les grenades mutilantes, et démanteler les BRAV-M
+Retrouver la paix en Kanaky-Nouvelle Calédonie
+• Abandonner le processus de réforme constitutionnelle visant 
+au dégel immédiat du corps électoral. C’est un geste fort 
+d’apaisement qui permettra de retrouver le chemin du dialogue 
+et de la recherche du consensus. À travers la mission de 
+dialogue, renouer avec la promesse du « destin commun », dans 
+l’esprit des accords de Matignon et de Nouméa et d’impartialité 
+de l’État, en soutenant la recherche d’un projet d’accord global 
+qui engage un véritable processus d’émancipation et de 
+décolonisation.
+Mettre à l’ordre du jour des changements en Europe
+• Refuser les contraintes austéritaires du pacte budgétaire 
+• Proposer une réforme de la Politique agricole commune (PAC)
+"""
+    tokenizer: BertTokenizerFast = AutoTokenizer.from_pretrained(
+        "../frontend/public/artifacts/all-MiniLM-L6-v2",
+        clean_up_tokenization_spaces=True,
+    )  # type: ignore
+    text_tokenized = tokenizer(
+        text,
+        return_tensors="np",
+        return_overflowing_tokens=True,
+        max_length=128,
+        truncation=True,
+        padding=True,
+        stride=64,
+    )
+    ort_sess = ort.InferenceSession(
+        "../frontend/public/artifacts/all-MiniLM-L6-v2/onnx/model.onnx",
+        providers=["CUDAExecutionProvider", "CPUExecutionProvider"],
+    )
+
+    input_ids: NDArray[np.int64] = text_tokenized["input_ids"]  # type: ignore
+    attention_mask: NDArray[np.int64] = text_tokenized["attention_mask"]  # type: ignore
+    print(input_ids.shape)
+    print(attention_mask.shape)
+
+    output: NDArray[np.float32] = ort_sess.run(
+        ["sentence_embedding"],
+        {"input_ids": input_ids, "attention_mask": attention_mask},
+    )[0]
+    print(output.shape)
+
+    print(output.tolist())
+
+
+# testing_sliding_window_embeddings()
+
+
+def testing_2d_array_to_list():
+    array_2d = np.array([[1.5, 2.3], [3.1, 4.8]])
+    list_of_lists = array_2d.tolist()
+    print(list_of_lists)
+
+
+# testing_2d_array_to_list()
 
 
 def testing_sliding_window_tokenizer():
@@ -102,7 +221,22 @@ Mettre à l’ordre du jour des changements en Europe
     print("\n".join(tokenizer.batch_decode(input_ids)))
 
 
-testing_sliding_window_tokenizer()
+# testing_sliding_window_tokenizer()
+
+
+def testing_batch_embedding():
+    ...
+    # docs = [
+    #     "That is a happy person",
+    #     "That is a happy dog",
+    #     "That is a very happy person",
+    #     "Today is a sunny day",
+    # ]
+    # doc_embeddings = [all_minilm_l6_v2_conf.impl.embed(doc) for doc in docs]
+    # print("doc_embeddings", type(doc_embeddings), doc_embeddings)
+
+
+# testing_batch_embedding()
 
 
 def testing_all_MiniLM_L6_v2_onnx_as_python():
@@ -392,11 +526,12 @@ def testing_build_torch_tensor():
 
 
 def testing_pickle_sha3_512():
-    pdfs = file_system_svc.impl.read_pdfs(envs_conf.impl.input_dirpath)
-    byte_data = pickle.dumps(pdfs)
-    print(len(byte_data))
-    test = hashlib.sha3_512(byte_data).hexdigest()
-    print(test)
+    ...
+    # pdfs = file_system_svc.impl.read_pdfs(envs_conf.impl.prgms_dirpath)
+    # byte_data = pickle.dumps(pdfs)
+    # print(len(byte_data))
+    # test = hashlib.sha3_512(byte_data).hexdigest()
+    # print(test)
 
 
 # testing_pickle_sha3_512()

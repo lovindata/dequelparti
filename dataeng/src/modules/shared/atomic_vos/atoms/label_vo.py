@@ -1,0 +1,1 @@
+LabelVo = str

@@ -13,6 +13,7 @@ onnx = "^1.16.2"
 onnxscript = "^0.1.0.dev20240809"
 onnxruntime-gpu = { version = "^1.18.1", source = "onnxruntime-cuda-12" }
 transformers = "^4.44.0"
+scikit-learn = "^1.5.1"
 
 [[tool.poetry.source]]
 name = "pytorch-cu124"
