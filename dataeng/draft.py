@@ -47,7 +47,8 @@ def testing_batch_embedding():
         "That is a very happy person",
         "Today is a sunny day",
     ]
-    print(all_minilm_l6_v2_conf.impl.embed(docs))
+    doc_embeddings = [all_minilm_l6_v2_conf.impl.embed(doc) for doc in docs]
+    print("doc_embeddings", type(doc_embeddings), doc_embeddings)
 
 
 # testing_batch_embedding()
@@ -98,8 +99,8 @@ Mettre à l’ordre du jour des changements en Europe
         stride=64,
     )
     input_ids: NDArray[np.int64] = text_tokenized["input_ids"]  # type: ignore
-    print("\n".join(tokenizer.batch_decode(input_ids)))
     print("input_ids", type(input_ids), type(input_ids[0]), type(input_ids[0][0]))
+    print("\n".join(tokenizer.batch_decode(input_ids)))
 
 
 testing_sliding_window_tokenizer()
