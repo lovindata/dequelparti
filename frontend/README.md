@@ -1,4 +1,25 @@
-# Contribution
+## Contribution
+
+### Installation
+
+Please install [VSCode](https://code.visualstudio.com/) and its extensions:
+
+- Auto Rename Tag
+- ES7+ React/Redux/React-Native snippets
+- Highlight Matching Tag
+- ESLint
+- Tailwind CSS IntelliSense
+- Prettier - Code formatter
+- Git Graph
+- vscode-pdf
+- One Dark Pro (optional)
+- Material Icon Theme (optional)
+
+Please install [git](https://git-scm.com/download/linux):
+
+```bash
+sudo apt install git
+```
 
 Please install [Node.js and npm](https://nodejs.org/en/download/package-manager).
 
@@ -10,19 +31,20 @@ node -v
 npm -v
 ```
 
-Please install VSCode extensions.
-
-- Auto Rename Tag
-- ES7+ React/Redux/React-Native snippets
-- Highlight Matching Tag
-- ESLint
-- Prettier - Code formatter
-- Tailwind CSS IntelliSense
-
 Please install the dependencies.
 
 ```bash
 npm install
+```
+
+If all worked, congratulations! You are ready to contribute!
+
+### Commands
+
+To start the application in development mode.
+
+```bash
+npm run dev
 ```
 
 To update the dependencies.
@@ -31,13 +53,7 @@ To update the dependencies.
 npm update --save
 ```
 
-To start the application in development mode.
-
-```bash
-npm run dev
-```
-
-# Deployment
+### Deployment
 
 For Github Pages:
 
