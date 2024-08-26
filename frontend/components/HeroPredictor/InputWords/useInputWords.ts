@@ -1,9 +1,9 @@
-import { useLazyLoader } from "@/services/lazyloader";
-import { paths } from "@/services/lazyloader/endpoints";
+import { useVectorDatabase } from "@/services/vector_database";
+import { paths } from "@/services/vector_database/endpoints";
 import { useQuery } from "@tanstack/react-query";
 
 export function useInputWords() {
-  const lazyloader = useLazyLoader();
+  const lazyloader = useVectorDatabase();
   const { data, isLoading } = useQuery({
     queryKey: ["/artifacts/vector-database.json"],
     queryFn: () =>

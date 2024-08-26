@@ -6,13 +6,17 @@ export interface paths {
 
 export interface components {
   schemas: {
-    EmbeddingTableVo: components["schemas"]["EmbeddingRowVo"][];
+    IdVo: string;
+    DecodedEmbeddingVo: string;
+    VectorEmbeddingVo: number[];
+    LabelVo: string;
     EmbeddingRowVo: {
-      id: string;
-      decoded_embedding: str;
-      vector_embedding: number[];
-      label: str;
+      id: components["schemas"]["IdVo"];
+      decoded_embedding: components["schemas"]["DecodedEmbeddingVo"];
+      vector_embedding: components["schemas"]["VectorEmbeddingVo"];
+      label: components["schemas"]["LabelVo"];
     };
+    EmbeddingTableVo: components["schemas"]["EmbeddingRowVo"][];
   };
 }
 
