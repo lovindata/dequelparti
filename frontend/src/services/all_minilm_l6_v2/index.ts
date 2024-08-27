@@ -1,5 +1,5 @@
 import nextConfig from "@/next.config.mjs";
-import { components } from "@/services/vector_database/endpoints";
+import { components } from "@/src/services/vector_database/endpoints";
 import { AutoModel, AutoTokenizer, env, cos_sim } from "@xenova/transformers";
 import { useEffect, useState } from "react";
 

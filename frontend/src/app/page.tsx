@@ -1,6 +1,6 @@
 "use client";
 
-import HeroPredictor from "@/components/HeroPredictor";
+import HeroPredictor from "@/src/components/HeroPredictor";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 

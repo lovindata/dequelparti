@@ -1,6 +1,6 @@
 import "./globals.css";
-import { ThemeProvider } from "@/components/shadcn/theme-provider";
-import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/src/components/shadcn/theme-provider";
+import { cn } from "@/src/lib/utils";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 

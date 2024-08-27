@@ -1,5 +1,5 @@
-import { useVectorDatabase } from "@/services/vector_database";
-import { paths } from "@/services/vector_database/endpoints";
+import { useVectorDatabase } from "@/src/services/vector_database";
+import { paths } from "@/src/services/vector_database/endpoints";
 import { useQuery } from "@tanstack/react-query";
 
 export function useInputWords() {

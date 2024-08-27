@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/src/components/ui/badge";
+import { Button } from "@/src/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -7,7 +7,7 @@ import {
   CommandInput,
   CommandList,
   CommandGroup,
-} from "@/components/ui/command";
+} from "@/src/components/ui/command";
 // import vocabulary from "@/data/vocabulary.json";
 import Fuse from "fuse.js";
 import React from "react";

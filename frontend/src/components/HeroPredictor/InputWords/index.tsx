@@ -1,4 +1,4 @@
-import { useInputWords } from "@/components/HeroPredictor/InputWords/useInputWords";
+import { useInputWords } from "@/src/components/HeroPredictor/InputWords/useInputWords";
 import axios from "axios";
 
 export default function InputWords() {

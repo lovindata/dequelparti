@@ -1,5 +1,5 @@
-import { DarkmodeToggle } from "@/components/_old/darkmode-toggle";
 import Logo from "@/public/svgs/logo.svg";
+import { DarkmodeToggle } from "@/src/components/_old/darkmode-toggle";
 import Link from "next/link";
 
 export function NavigationBar() {
