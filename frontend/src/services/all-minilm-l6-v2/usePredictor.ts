@@ -40,7 +40,11 @@ export function usePredictor() {
       }
 
       async function predictAsync() {
-        const { input_ids, attention_mask } = await model.tokenizer(userInput);
+        const { input_ids, attention_mask } = await model.tokenizer(userInput, {
+          truncation: true,
+          padding: true,
+          max_length: 32, // See value in ../dataeng/src/confs/envs_conf.py
+        });
         const userInputVectorEmbedding: number[] = await model
           .model({
             input_ids: input_ids,

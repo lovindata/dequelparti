@@ -1,17 +1,12 @@
-import { useInputWords } from "@/src/components/hero-predictor/input-words/useInputWords";
-import { Input } from "@/src/components/ui/input";
+import { Input } from "@/src/components/shadcn/ui/input";
 import { Search } from "lucide-react";
 
-export default function InputWords() {
-  const {
-    userInput,
-    setUserInput,
-    prediction,
-    isLoadingVectorDatabase,
-    isLoadingModel,
-    isPredicting,
-  } = useInputWords();
+interface Props {
+  userInput: string;
+  setUserInput: (value: string) => void;
+}
 
+export function InputWords({ userInput, setUserInput }: Props) {
   return (
     <div className="relative flex items-center">
       <Search className="absolute h-3 w-3 left-3" />

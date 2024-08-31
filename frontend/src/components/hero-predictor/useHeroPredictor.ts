@@ -1,7 +1,7 @@
 import { useAllMiniLML6V2 } from "@/src/services/all-minilm-l6-v2";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
-export function useInputWords() {
+export function useHeroPredictor() {
   const {
     predict,
     prediction,
@@ -10,13 +10,13 @@ export function useInputWords() {
     isPredicting,
   } = useAllMiniLML6V2();
   const [userInput, setUserInput] = useState("");
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const setUserInputReducer = (userInput: string) => {
-    predict(userInput);
+    timeoutRef.current !== null && clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => predict(userInput), 600);
     setUserInput(userInput);
   };
-  console.log("predict", predict);
-  console.log("prediction", prediction);
 
   return {
     userInput,

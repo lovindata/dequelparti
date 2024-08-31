@@ -1,5 +1,5 @@
-import { Badge } from "@/src/components/ui/badge";
-import { Button } from "@/src/components/ui/button";
+import { Badge } from "@/src/components/shadcn/ui/badge";
+import { Button } from "@/src/components/shadcn/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -7,7 +7,7 @@ import {
   CommandInput,
   CommandList,
   CommandGroup,
-} from "@/src/components/ui/command";
+} from "@/src/components/shadcn/ui/command";
 // import vocabulary from "@/data/vocabulary.json";
 import Fuse from "fuse.js";
 import React from "react";

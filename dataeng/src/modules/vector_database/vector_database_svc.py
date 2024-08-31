@@ -39,8 +39,6 @@ class VectorDatabaseSvc:
         os.path.join(envs_conf.embedding_model_dirpath, "onnx/model.onnx"),
         providers=["CUDAExecutionProvider", "CPUExecutionProvider"],
     )
-    _max_length: int = 32
-    _stride: int = 16
 
     def build_vector_database(self, pdfs: Sequence[PdfVo]) -> None:
         logger.info("Building vector database.")
@@ -64,8 +62,8 @@ class VectorDatabaseSvc:
             return_overflowing_tokens=True,
             truncation=True,
             padding=True,
-            max_length=self._max_length,
-            stride=self._stride,
+            max_length=self.envs_conf.embedding_model_max_length,
+            stride=self.envs_conf.embedding_model_stride,
         )
         input_ids: NDArray[np.int64] = text_tokenized["input_ids"]  # type: ignore
         attention_mask: NDArray[np.int64] = text_tokenized["attention_mask"]  # type: ignore
