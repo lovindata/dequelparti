@@ -1,6 +1,6 @@
 export function HeroTitle() {
   return (
-    <h1 className="text-white text-4xl text-center font-semibold">
+    <h1 className="text-center text-4xl font-semibold text-white">
       C&rsquo;est de quel parti politique ?
     </h1>
   );

@@ -1,14 +1,18 @@
 "use client";
 
+import { Footer } from "@/src/components/footer";
 import { HeroPredictor } from "@/src/components/hero-predictor";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 
 export default function Home() {
   return (
-    <main className="px-2">
+    <main>
       <QueryClientProvider client={new QueryClient()}>
-        <HeroPredictor />
+        <div className="px-2 py-10">
+          <HeroPredictor />
+        </div>
+        <Footer />
       </QueryClientProvider>
     </main>
   );

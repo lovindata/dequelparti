@@ -9,11 +9,11 @@ interface Props {
 export function InputWords({ userInput, setUserInput }: Props) {
   return (
     <div className="relative flex items-center">
-      <Search className="absolute h-3 w-3 left-3" />
+      <Search className="absolute left-3 h-3 w-3" />
       <Input
         type="text"
         placeholder="Ajoute tes mots..."
-        className="pr-2.5 pl-[30px]"
+        className="pl-[30px] pr-2.5"
         value={userInput}
         onChange={(e) => setUserInput(e.target.value)}
       />

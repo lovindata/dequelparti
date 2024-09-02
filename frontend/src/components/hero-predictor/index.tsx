@@ -5,14 +5,7 @@ import { HeroTitle } from "@/src/components/hero-predictor/title";
 import { useHeroPredictor } from "@/src/components/hero-predictor/useHeroPredictor";
 
 export function HeroPredictor() {
-  const {
-    userInput,
-    setUserInput,
-    prediction,
-    // isLoadingVectorDatabase,
-    // isLoadingModel,
-    // isPredicting,
-  } = useHeroPredictor();
+  const { userInput, setUserInput, prediction } = useHeroPredictor();
 
   return (
     <div className="flex flex-col space-y-3 px-6">

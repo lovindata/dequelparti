@@ -100,11 +100,11 @@ export function ChartCard({ chartData }: Props) {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none animate-pulse">
+        <div className="flex animate-pulse gap-2 font-medium leading-none">
           Réponse en temps réel <Activity className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Je suis encore un modèle en apprentissage, soyez indulgent 🥺
+          Je suis encore un modèle en apprentissage, soyez indulgent
         </div>
       </CardFooter>
     </Card>
