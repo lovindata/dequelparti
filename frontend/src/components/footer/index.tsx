@@ -1,4 +1,5 @@
 import nextConfig from "@/next.config.mjs";
+import { cn } from "@/src/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -11,9 +12,16 @@ import {
   FaXTwitter,
 } from "react-icons/fa6";
 
-export function Footer() {
+interface Props extends React.HTMLAttributes<HTMLDivElement> {}
+
+export function Footer({ className }: Props) {
   return (
-    <footer className="flex flex-col items-center space-y-7 border-t bg-card px-4 py-11 text-sm">
+    <footer
+      className={cn(
+        "flex flex-col items-center space-y-7 border-t bg-card px-4 py-11 text-sm",
+        className,
+      )}
+    >
       <Link
         className="flex items-center space-x-2 font-semibold text-muted-foreground hover:text-current"
         href="/"
@@ -98,7 +106,6 @@ export function Footer() {
           />
         </Link>
       </div>
-
       <p className="font-semibold text-muted-foreground">Copyright © 2024</p>
       <p className="flex space-x-1 text-xs">
         <span className="font-light text-muted-foreground">Crafted by</span>
