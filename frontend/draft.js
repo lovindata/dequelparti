@@ -34,15 +34,20 @@ async function run() {
   console.log("############ INPUT ############");
   console.log(typeof inputVector, typeof inputVector[0]);
   console.log(inputVector);
+  const testInputVector = [...inputVector];
+  console.log(typeof testInputVector, typeof testInputVector[0]);
+  console.log(testInputVector);
 
   const docVectors = await Promise.all(docs.map((doc) => getEmbedding(doc)));
-  console.log("############ DOCS ############");
-  console.log(typeof docVectors, typeof docVectors[0], typeof docVectors[0][0]);
-  console.log(docVectors);
+  // console.log("############ DOCS ############");
+  // console.log(typeof docVectors, typeof docVectors[0], typeof docVectors[0][0]);
+  // console.log(docVectors);
 
-  const scores = docVectors.map((docVector) => cos_sim(inputVector, docVector));
+  const scores = docVectors.map((docVector) =>
+    cos_sim(testInputVector, docVector),
+  );
   console.log("############ SCORES ############");
-  console.log(typeof scores, typeof scores[0]);
+  // console.log(typeof scores, typeof scores[0]);
   console.log(scores);
 }
 
