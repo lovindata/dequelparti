@@ -11,7 +11,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col justify-between">
       <QueryClientProvider client={new QueryClient()}>
         <Navbar />
-        <div className="px-2 py-10">
+        <div className="px-2 py-10 md:px-8 md:py-[72px]">
           <HeroPredictor />
         </div>
         <Footer />

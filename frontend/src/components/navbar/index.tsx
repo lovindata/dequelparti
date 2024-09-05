@@ -10,7 +10,7 @@ export function Navbar({ className }: Props) {
   return (
     <div
       className={cn(
-        "m-2 flex items-center justify-between rounded-2xl border bg-card px-3 py-2",
+        "m-2 flex items-center justify-between rounded-2xl border bg-card px-3 py-2 md:m-4",
         className,
       )}
     >
