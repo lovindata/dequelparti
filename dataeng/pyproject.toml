@@ -5,31 +5,25 @@ package-mode = false
 python = "^3.12"
 loguru = "^0.7.2"
 pypdf2 = "^3.0.1"
-spacy = "^3.7.5"
-pyspellchecker = "^0.8.1"
 tqdm = "^4.66.4"
-ollama = "^0.2.1"
 torch = { version = "^2.4.0+cu124", source = "pytorch-cu124" }
 torchaudio = { version = "^2.4.0+cu124", source = "pytorch-cu124" }
 torchvision = { version = "^0.19.0+cu124", source = "pytorch-cu124" }
-fr-core-news-lg = { url = "https://github.com/explosion/spacy-models/releases/download/fr_core_news_lg-3.7.0/fr_core_news_lg-3.7.0-py3-none-any.whl" } # https://spacy.io/models/fr#fr_core_news_lg
-lightning = "^2.3.3"
-torchmetrics = "^1.4.1"
 onnx = "^1.16.2"
 onnxscript = "^0.1.0.dev20240809"
-
-[tool.poetry.group.dev.dependencies]
-pydantic = "^2.8.2"
-plotly = "^5.23.0"
+onnxruntime-gpu = { version = "^1.18.1", source = "onnxruntime-cuda-12" }
+transformers = "^4.44.0"
 scikit-learn = "^1.5.1"
-pandas = "^2.2.2"
-
 
 [[tool.poetry.source]]
 name = "pytorch-cu124"
 url = "https://download.pytorch.org/whl/cu124"
 priority = "explicit"
 
+[[tool.poetry.source]]
+name = "onnxruntime-cuda-12"
+url = "https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/"
+priority = "explicit"
 
 [build-system]
 requires = ["poetry-core"]

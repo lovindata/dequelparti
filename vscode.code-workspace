@@ -4,9 +4,6 @@
       "path": "."
     },
     {
-      "path": "llm"
-    },
-    {
       "path": "dataeng"
     },
     {
@@ -19,7 +16,7 @@
 
     // Git
     "git.autofetch": "all",
-    "git.autofetchPeriod": 180,
+    "git.autofetchPeriod": 60,
     "git.pruneOnFetch": true,
 
     // Json
