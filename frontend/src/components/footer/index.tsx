@@ -18,7 +18,7 @@ export function Footer({ className }: Props) {
   return (
     <footer
       className={cn(
-        "flex flex-col items-center space-y-7 border-t bg-card px-4 py-11 text-sm",
+        "flex flex-col items-center space-y-7 border-t px-4 py-11 text-sm",
         className,
       )}
     >

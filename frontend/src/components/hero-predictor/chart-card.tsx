@@ -12,6 +12,7 @@ import {
   ChartTooltipContent,
 } from "@/src/components/shadcn/ui/chart";
 import { Activity } from "lucide-react";
+import { useEffect } from "react";
 import {
   Bar,
   BarChart,
@@ -37,8 +38,22 @@ export function ChartCard({ chartData }: Props) {
     );
   }
 
+  // https://stackoverflow.com/questions/78735742/react-warning-yaxis-support-for-defaultprops-will-be-removed-from-function-com
+  useEffect(() => {
+    const originalConsoleError = console.error;
+    console.error = (...args: any[]) => {
+      if (typeof args[0] === "string" && /defaultProps/.test(args[0])) {
+        return;
+      }
+      originalConsoleError(...args);
+    };
+    return () => {
+      console.error = originalConsoleError;
+    };
+  }, []);
+
   return (
-    <Card>
+    <Card className="mx-auto max-w-3xl">
       <CardHeader>
         <CardTitle>Affiliation Politique</CardTitle>
         <CardDescription>En pourcentage</CardDescription>
