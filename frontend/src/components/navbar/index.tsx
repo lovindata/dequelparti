@@ -5,8 +5,8 @@ import Link from "next/link";
 
 export function Navbar() {
   return (
-    <div className="sticky top-0 z-50">
-      <div className="m-2 flex items-center justify-between rounded-2xl border px-3 py-2 shadow backdrop-blur md:m-4">
+    <nav className="sticky top-0 z-50 p-2 md:p-4 lg:py-4">
+      <div className="flex items-center justify-between rounded-2xl border px-3 py-2 backdrop-blur-3xl lg:mx-auto lg:max-w-5xl">
         <Link
           className="flex items-center space-x-2 font-semibold text-muted-foreground hover:text-current"
           href="/"
@@ -21,6 +21,6 @@ export function Navbar() {
         </Link>
         <DarkmodeToggle />
       </div>
-    </div>
+    </nav>
   );
 }
