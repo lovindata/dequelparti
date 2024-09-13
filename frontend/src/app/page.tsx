@@ -6,7 +6,7 @@ import { HeroPredictor } from "@/src/components/hero-predictor";
 import { ImageDivider } from "@/src/components/image-divider";
 import { LogoWall } from "@/src/components/logo-wall";
 import { Navbar } from "@/src/components/navbar";
-import { ProgramsCaroussel } from "@/src/components/programs-caroussel";
+import { ProgramsCarousel } from "@/src/components/programs-carousel";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 
@@ -20,7 +20,7 @@ export default function Home() {
         </div>
         <ImageDivider />
         <div className="space-y-10 px-2 py-10 md:space-y-[72px] md:px-8 md:py-[72px]">
-          {/* <ProgramsCaroussel /> */}
+          <ProgramsCarousel />
           <LogoWall />
           {/* <GitHubStats /> */}
         </div>
