@@ -9,21 +9,27 @@ export function useProgramsCarousel() {
     }),
   );
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
-  const [carouselCurrentIndex, setCarouselCurrentIndex] = useState(0);
   const [carouselLength, setCarouselLength] = useState(0);
+  const [carouselCurrentIndex, setCarouselCurrentIndex] = useState(0);
 
   useEffect(() => {
     if (carouselApi === undefined) return;
+    // Initialization
     setCarouselLength(carouselApi.scrollSnapList().length);
-    setCarouselCurrentIndex(carouselApi.selectedScrollSnap() + 1);
+    setCarouselCurrentIndex(carouselApi.selectedScrollSnap());
+    // Set embla events
+    carouselApi.on("resize", () => {
+      setCarouselLength(carouselApi.scrollSnapList().length);
+      setCarouselCurrentIndex(carouselApi.selectedScrollSnap());
+    });
     carouselApi.on("select", () =>
-      setCarouselCurrentIndex(carouselApi.selectedScrollSnap() + 1),
+      setCarouselCurrentIndex(carouselApi.selectedScrollSnap()),
     );
   }, [carouselApi]);
 
   const carouselIndicators = Array.from(
     { length: carouselLength },
-    (_, i) => i + 1,
+    (_, i) => i,
   ).map((i) => i == carouselCurrentIndex);
 
   return {
