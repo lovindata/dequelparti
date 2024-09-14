@@ -35,7 +35,7 @@ export function ProgramsCarousel() {
           </CarouselItem>
         </CarouselContent>
       </Carousel>
-      <div className="flex flex-row justify-center space-x-2 py-4 text-center text-sm text-muted-foreground">
+      <div className="flex flex-row justify-center space-x-2 py-4 text-center text-sm text-muted-foreground md:hidden">
         {carouselIndicators.map((indicator, key) => (
           <span
             key={key}
