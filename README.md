@@ -20,9 +20,9 @@
 
 Here's a demo of me enjoying playing with the AI 😂!
 
-<p align="center">
-  <img alt="DeQuelParti" src="https://raw.githubusercontent.com/lovindata/dequelparti/main/docs/dequelparti.gif" width="375px" style="max-width: 375px; border-radius: 8px;" />
-  <sub>DeQuelParti</sub>
+<p style="display: flex; flex-direction: column; align-items: center;">
+  <img alt="DeQuelParti" src="https://raw.githubusercontent.com/lovindata/dequelparti/main/docs/dequelparti.gif" style="max-width: 375px; border-radius: 8px;" />
+  <sub style="padding-top: 16px;">DeQuelParti</sub>
 </p>
 
 Would you like to try it too? Give it a try [here](https://lovindata.github.io/dequelparti)! 👍
