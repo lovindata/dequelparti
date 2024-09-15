@@ -21,8 +21,7 @@
 Here's a demo of me enjoying playing with the AI 😂!
 
 <p align="center">
-  <img alt="DeQuelParti" src="https://raw.githubusercontent.com/lovindata/dequelparti/main/docs/dequelparti.gif" width="375" style="max-width: 375px; border-radius: 8px;" />
-  <sub>DeQuelParti</sub>
+  <img alt="DeQuelParti" src="https://raw.githubusercontent.com/lovindata/dequelparti/develop/docs/dequelparti.gif" width="375" style="max-width: 375px; border-radius: 8px;" />
 </p>
 
 Would you like to try it too? Give it a try [here](https://lovindata.github.io/dequelparti)! 👍
