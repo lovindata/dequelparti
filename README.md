@@ -1,10 +1,37 @@
-# dequelparti
+<p align="center">
+  <a href="https://lovindata.github.io/dequelparti" target="_blank">
+    <img alt="DeQuelParti" src="https://raw.githubusercontent.com/lovindata/dequelparti/main/frontend/public/imgs/logo.webp" width="150" style="max-width: 100%;" />
+  </a>
+</p>
 
-## Roadmap
+<p align="center">
+  DeQuelParti - C'est de quel parti politique ?
+</p>
 
-- (dev) Run LLM dataset preparation: postive consequences, negative consequences, detailed summaries, reformulations
-- (explore) Optimal window and stride, it depends on the sentence size and context group of words
-  - Defines if it's worth continuing
-- (dev) Build input vectors and train deep learning models
-- (dev) PyTorch model to ONNX web runtime
-- (dev) Usage of the model on React frontend and performance checks
+<p align="center">
+    <a href="https://github.com/lovindata/dequelparti/blob/main/LICENSE">
+      <img src="https://img.shields.io/github/license/lovindata/dequelparti" alt="License">
+    </a>
+</p>
+
+---
+
+## Looks
+
+Here's a demo of me enjoying playing with the AI 😂!
+
+<p align="center">
+  <img alt="DeQuelParti" src="https://raw.githubusercontent.com/lovindata/sr7/main/docs/dequelparti.gif" width="100%" style="max-width: 100%; border-radius: 8px;" />
+  <sub>DeQuelParti</sub>
+</p>
+
+Would you like to try it too? Give it a try [here](https://lovindata.github.io/dequelparti)! 👍
+
+## Contribution
+
+This repository includes multiple components. Please check each README.md file for more details.
+
+- [DataEng](https://github.com/lovindata/dequelparti/tree/main/dataeng)
+- [Design](https://github.com/lovindata/dequelparti/tree/main/design)
+- [Docs](https://github.com/lovindata/dequelparti/tree/main/docs)
+- [Frontend](https://github.com/lovindata/dequelparti/tree/main/frontend)
