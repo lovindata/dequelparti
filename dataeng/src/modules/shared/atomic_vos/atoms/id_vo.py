@@ -1,1 +1,0 @@
-IdVo = int
