@@ -12,6 +12,7 @@ const fontSans = Roboto({
 export const metadata: Metadata = {
   title: "De quel parti ?",
   description: "C'est de quel parti politique ?",
+  metadataBase: new URL("https://lovindata.github.io"), // For open graph resolution
 };
 
 export default function RootLayout({
